@@ -2,7 +2,7 @@ import * as React from 'react';
 import './App.css';
 import Test from './test';
 
-class App extends React.Component<{}, null> {
+class App extends React.Component<{}> {
   render() {
     return (
       <div className="App">
