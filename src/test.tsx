@@ -17,7 +17,7 @@ export default class Test extends React.Component<Props, State>{
 
     componentDidMount() {
         let interval = setInterval(this.updateCounter, 1000);
-        this.state = { ...this.state, interval };
+        this.setState({ interval });
     }
 
     componentWillUnmount() {
