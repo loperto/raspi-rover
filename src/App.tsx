@@ -4,7 +4,7 @@ import * as socketIOClient from 'socket.io-client';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 const logo = require('./logo.svg');
-const image = require('./scopare.jpg');
+const image = require('./photo.jpg');
 class App extends React.Component {
 
   socket: SocketIOClient.Socket;

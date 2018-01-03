@@ -5,30 +5,36 @@ const fs = require("fs");
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const os = require('os');
 
 const workDir = path.join(__dirname, "build");
 const imagesBasePath = path.join(workDir, "static", "media");
-const photoName = "scopare";
+const photoName = "photo";
 
-fs.readdir(imagesBasePath, function (err, files) {
-    for (let file of files) {
+console.log("running on os", os.type());
 
-        if (file.indexOf(photoName) !== -1) {
-            let imagePath = path.join(imagesBasePath, file);
-            console.log("Watching changes of image file", imagePath);
-            var watcher = chokidar.watch(imagePath, {
-                persistent: true,
-                usePolling: true,
-                interval: 10,
-            });
+for (let file of fs.readdirSync(imagesBasePath)) {
+    console.log(file);
+}
 
-            watcher.on('change', function (file) {
-                console.log('change >>> ', file);
-                io.emit('server', { for: 'everyone' });
-            });
-        }
-    }
-});
+// fs.readdir(imagesBasePath, function (err, files) {
+//     for (let file of files) {
+//         if (file.indexOf(photoName) !== -1) {
+//             let imagePath = path.join(imagesBasePath, file);
+//             console.log("Watching changes of image file", imagePath);
+//             var watcher = chokidar.watch(imagePath, {
+//                 persistent: true,
+//                 usePolling: true,
+//                 interval: 10,
+//             });
+
+//             watcher.on('change', function (file) {
+//                 console.log('change >>> ', file);
+//                 io.emit('server', { for: 'everyone' });
+//             });
+//         }
+//     }
+// });
 
 app.use(express.static(workDir));
 
