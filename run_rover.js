@@ -69,5 +69,5 @@ if (os.type() === "Linux") {
         .width(640)
         .height(480)
         .quality(75)
-        .takePicture(imagePath);
+        .takePicture(path.basename(imagePath));
 }
