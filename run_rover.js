@@ -26,7 +26,7 @@ for (let file of fs.readdirSync(imagesBasePath)) {
         });
 
         watcher.on('change', function (file) {
-            console.log('change >>> ', file);
+            //console.log('change >>> ', file);
             io.emit('server', { for: 'everyone' });
         });
 
