@@ -11,12 +11,13 @@ var PiCamera = require('./camera.js');
 const workDir = path.join(__dirname, "build");
 const imagesBasePath = path.join(workDir, "static", "media");
 const photoName = "photo";
+let imagePath = null;
 
 console.log("running on os", os.type());
 
 for (let file of fs.readdirSync(imagesBasePath)) {
     if (file.indexOf(photoName) !== -1) {
-        let imagePath = path.join(imagesBasePath, file);
+        imagePath = path.join(imagesBasePath, file);
 
         var watcher = chokidar.watch(imagePath, {
             persistent: true,
@@ -56,7 +57,7 @@ io.on('connection', function (socket) {
 });
 
 if (os.type() === "Linux") {
-    console.log("starting camera");
+    console.log("starting camera. file name", imagePath);
     var camera = new PiCamera();
     // start image capture
     camera
@@ -68,5 +69,5 @@ if (os.type() === "Linux") {
         .width(640)
         .height(480)
         .quality(75)
-        .takePicture(photoName);
+        .takePicture(imagePath);
 }
