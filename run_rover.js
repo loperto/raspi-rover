@@ -6,6 +6,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const os = require('os');
+var PiCamera = require('./camera.js');
 
 const workDir = path.join(__dirname, "build");
 const imagesBasePath = path.join(workDir, "static", "media");
@@ -53,3 +54,19 @@ io.on('connection', function (socket) {
         io.emit('chat message', msg);
     });
 });
+
+if (os.type() === "Linux") {
+    console.log("starting camera");
+    var camera = new PiCamera();
+    // start image capture
+    camera
+        .nopreview()
+        .baseFolder(imagesBasePath)
+        .thumb('0:0:0') // dont include thumbnail version
+        .timeout(9999999) // never end
+        .timelapse(250) // how often we should capture an image
+        .width(640)
+        .height(480)
+        .quality(75)
+        .takePicture(photoName);
+}
