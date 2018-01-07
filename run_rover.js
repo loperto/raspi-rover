@@ -8,12 +8,13 @@ var io = require('socket.io')(http);
 const os = require('os');
 var PiCamera = require('./camera.js');
 
+const osName = os.type();
 const workDir = path.join(__dirname, "build");
 const imagesBasePath = path.join(workDir, "static", "media");
 const photoName = "photo";
 let imagePath = null;
 
-console.log("running on os", os.type());
+console.log("running on os", osName);
 
 for (let file of fs.readdirSync(imagesBasePath)) {
     if (file.indexOf(photoName) !== -1) {
@@ -26,8 +27,7 @@ for (let file of fs.readdirSync(imagesBasePath)) {
         });
 
         watcher.on('change', function (file) {
-            //console.log('change >>> ', file);
-            io.emit('server', { for: 'everyone' });
+            io.emit('server', "scopare", { for: 'everyone' });
         });
 
         console.log("Watching changes of image file", imagePath);
@@ -52,7 +52,9 @@ io.on('connection', function (socket) {
     });
 });
 
-if (os.type() === "Linux") {
+//setInterval(() => io.emit('server', new Date().valueOf().toString()), 2000);
+
+if (osName === "Linux") {
     console.log("starting camera. file name", imagePath);
     var camera = new PiCamera();
     camera
