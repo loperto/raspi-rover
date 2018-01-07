@@ -9,7 +9,7 @@ class App extends React.Component {
 
   socket: SocketIOClient.Socket;
   componentDidMount() {
-    this.socket = socketIOClient('http://192.168.1.5:3000');
+    this.socket = socketIOClient(window.location.href);
     this.socket.on('server', this.socketListener);
   }
 
