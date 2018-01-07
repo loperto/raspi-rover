@@ -41,10 +41,6 @@ app.get('/', function (req, res) {
     res.sendFile(workDir);
 });
 
-// app.get('/', function (req, res) {
-//     res.sendFile(__dirname + "/index.html");
-// });
-
 http.listen(3000, function () {
     console.log(`listening on *:3000`);
 });
@@ -59,13 +55,12 @@ io.on('connection', function (socket) {
 if (os.type() === "Linux") {
     console.log("starting camera. file name", imagePath);
     var camera = new PiCamera();
-    // start image capture
     camera
         .nopreview()
         .baseFolder(imagesBasePath)
-        .thumb('0:0:0') // dont include thumbnail version
-        .timeout(9999999) // never end
-        .timelapse(250) // how often we should capture an image
+        .thumb('0:0:0')
+        .timeout(9999999)
+        .timelapse(250)
         .width(640)
         .height(480)
         .quality(75)
