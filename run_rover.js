@@ -46,7 +46,7 @@ if (osName === "Linux") {
         .nopreview()
         .baseFolder(imagesBasePath)
         .thumb('0:0:0')
-        .timeout(9999999)
+        .timeout(999999999)
         .timelapse(250)
         .width(640)
         .height(480)
