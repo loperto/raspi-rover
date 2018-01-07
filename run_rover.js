@@ -7,12 +7,14 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const os = require('os');
 var PiCamera = require('./camera.js');
+var Serial = require('./serial.js');
 
 const osName = os.type();
 const workDir = path.join(__dirname, "build");
 const imagesBasePath = path.join(workDir, "static", "media");
 const photoName = "photo";
 let imagePath = null;
+let serial = null;
 
 console.log("running on os", osName);
 
@@ -35,26 +37,9 @@ for (let file of fs.readdirSync(imagesBasePath)) {
     }
 }
 
-app.use(express.static(workDir));
-
-app.get('/', function (req, res) {
-    res.sendFile(workDir);
-});
-
-http.listen(3000, function () {
-    console.log(`listening on *:3000`);
-});
-
-io.on('connection', function (socket) {
-    socket.on('chat message', function (msg) {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-    });
-});
-
-//setInterval(() => io.emit('server', new Date().valueOf().toString()), 2000);
-
 if (osName === "Linux") {
+    console.log("starting serial.");
+    serial = new Serial();
     console.log("starting camera. file name", imagePath);
     var camera = new PiCamera();
     camera
@@ -68,3 +53,24 @@ if (osName === "Linux") {
         .quality(75)
         .takePicture(path.basename(imagePath));
 }
+
+app.use(express.static(workDir));
+
+app.get('/', function (req, res) {
+    res.sendFile(workDir);
+});
+
+http.listen(3000, function () {
+    console.log(`listening on *:3000`);
+});
+
+io.on('connection', function (socket) {
+    socket.on('chat message', function (msg) {
+        console.log('message: ' + msg);
+        if (serial) serial.write('l');
+        io.emit('chat message', msg);
+    });
+});
+
+//setInterval(() => io.emit('server', new Date().valueOf().toString()), 2000);
+
