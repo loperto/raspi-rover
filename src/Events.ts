@@ -20,11 +20,11 @@ export class TEvent<T> {
 }
 
 export class Event {
+    private emitter = new EventEmitter();
+    private EVENT_NAME = Guid.newGuid();
     constructor() {
         this.emitter.setMaxListeners(Infinity);
     }
-    private emitter = new EventEmitter();
-    private EVENT_NAME = Guid.newGuid();
 
     register(cb: () => void): void {
         this.emitter.on(this.EVENT_NAME, cb);

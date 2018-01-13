@@ -17,7 +17,7 @@ export default class ControlPanel extends React.Component<Props, State> {
         super(props);
         this.state = {
             messages: [],
-        }
+        };
     }
 
     componentDidMount() {
