@@ -1,18 +1,19 @@
 
-// the setup function runs once when you press reset or power the board
+int ledPin = 13;
+
 void setup() {
 	Serial.begin(9600);
 	// initialize digital pin LED_BUILTIN as an output.
-	pinMode(LED_BUILTIN, OUTPUT);
+	pinMode(ledPin, OUTPUT);
 }
 
 void toggleLed() {
-	int ledStatus = digitalRead(LED_BUILTIN);
+	int ledStatus = digitalRead(ledPin);
 	if (ledStatus == HIGH) {
-		digitalWrite(LED_BUILTIN, LOW);
+		digitalWrite(ledPin, LOW);
 	}
 	else {
-		digitalWrite(LED_BUILTIN, HIGH);
+		digitalWrite(ledPin, HIGH);
 	}
 
 }
