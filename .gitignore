@@ -61,6 +61,6 @@ typings/
 # next.js build output
 .next
 
-./rover_engine/Debug
-./rover_engine/__vm
-./rover_engine/.vs
+/rover_engine/Debug/
+/rover_engine/__vm/
+/rover_engine/.vs/
