@@ -22,7 +22,6 @@ void toggleLed() {
 void loop() {
 	if (Serial.available()) {
 		char c = Serial.read();
-		Serial.println(c);
 		if (c == 'l') {
 			toggleLed();
 			Serial.println("recived");
