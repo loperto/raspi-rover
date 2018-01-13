@@ -18,3 +18,21 @@ export class TEvent<T> {
         this.emitter.emit(this.EVENT_NAME, item);
     }
 }
+
+export class Event {
+    constructor() {
+        this.emitter.setMaxListeners(Infinity);
+    }
+    private emitter = new EventEmitter();
+    private EVENT_NAME = Guid.newGuid();
+
+    register(cb: () => void): void {
+        this.emitter.on(this.EVENT_NAME, cb);
+    }
+    unregister(cb: () => void): void {
+        this.emitter.removeListener(this.EVENT_NAME, cb);
+    }
+    emit(): void {
+        this.emitter.emit(this.EVENT_NAME);
+    }
+}

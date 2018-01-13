@@ -29,7 +29,7 @@ for (let file of fs.readdirSync(imagesBasePath)) {
         });
 
         watcher.on('change', function (file) {
-            io.emit('server', "scopare", { for: 'everyone' });
+            io.emit('refresh_image', { for: 'everyone' });
         });
 
         console.log("Watching changes of image file", imagePath);
@@ -46,6 +46,7 @@ if (osName === "Linux") {
 
     serial.onMessage(function (data) {
         console.log("from arduino:", data);
+        io.emit('rover_message', data);
     });
 
     var camera = new PiCamera();
@@ -72,10 +73,9 @@ http.listen(4000, function () {
 });
 
 io.on('connection', function (socket) {
-    socket.on('chat message', function (msg) {
-        console.log('message: ' + msg);
-        if (serial) serial.write('l');
-        io.emit('chat message', msg);
+    socket.on('client_command', function (msg) {
+        console.log('client_command: ' + msg);
+        if (serial) serial.write('l');      
     });
 });
 

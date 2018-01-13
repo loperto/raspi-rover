@@ -6,25 +6,45 @@ export interface Props {
 
 }
 
-export default class ControlPanel extends React.Component<Props> {
+export interface State {
+    messages: string[];
+}
+
+export default class ControlPanel extends React.Component<Props, State> {
+
     socket: Socket;
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            messages: [],
+        }
+    }
+
     componentDidMount() {
         this.socket = new Socket();
         this.socket.initSocket(window.location.href);
-        this.socket.Changed.register(this.socketListener);
+        this.socket.ImageChanged.register(this.imageListener);
+        this.socket.Messages.register(this.messageListener);
     }
 
     componentWillUnmount() {
-        this.socket.Changed.unregister(this.socketListener);
+        this.socket.ImageChanged.unregister(this.imageListener);
+        this.socket.Messages.unregister(this.messageListener);
     }
 
-    socketListener = (payload: string) => {
-        console.log("serve message:payload", payload);
+    messageListener = (payload: string) => {
+        console.log("server message:", payload);
+        let messages = [...this.state.messages, payload];
+        this.setState({ messages });
+    }
+
+    imageListener = () => {
+        console.log("image refreshed!");
         this.forceUpdate();
     }
 
     send = () => {
-        this.socket.send({ id: "chat message", payload: "red" });
+        this.socket.send({ id: "client_command", payload: "red" });
     }
 
     render() {
