@@ -5,8 +5,9 @@ module.exports = function Serial() {
         baudRate: 9600
     });
 
-    this.serial.on('readable', function () {
-        console.log('Data:', port.read());
+
+    this.serial.on('data', function (data) {
+        console.log('Data:', data);
     });
 
     this.write = function write(message, onError) {
