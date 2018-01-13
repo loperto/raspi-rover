@@ -38,8 +38,12 @@ for (let file of fs.readdirSync(imagesBasePath)) {
 }
 
 if (osName === "Linux") {
+
     console.log("starting serial.");
-    serial = new Serial();
+    serial = new Serial(function onMessage(mes) {
+        console.log(mes);
+    });
+
     console.log("starting camera. file name", imagePath);
     var camera = new PiCamera();
     camera
