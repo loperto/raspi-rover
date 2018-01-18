@@ -6,7 +6,7 @@ module.exports = function Camera() {
     this.running = false;
 
     this.startCamera = function startCamera(filePath) {
-        
+
         if (this.running) {
             console.log("camera is already running");
             return;
@@ -42,6 +42,9 @@ module.exports = function Camera() {
         });
 
     }, this.stopCamera = function stopCamera() {
-        if (this.running) this.child.kill();
-    }    
+        if (this.running) {
+            this.child.kill();
+            this.running = false;
+        }
+    }
 }
