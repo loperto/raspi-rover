@@ -15,6 +15,7 @@ const imagesBasePath = path.join(workDir, "static", "media");
 const photoName = "photo";
 let imagePath = null;
 let serial = null;
+let camera = new PiCamera();
 
 console.log("running on os", osName);
 
@@ -38,7 +39,6 @@ for (let file of fs.readdirSync(imagesBasePath)) {
 }
 
 if (osName === "Linux") {
-
     console.log("starting serial.");
     serial = new Serial();
 
@@ -68,12 +68,11 @@ io.on('connection', function (socket) {
         }
         if (msg == "start_camera") {
             console.log("starting camera. file name", imagePath);
-            camera = new PiCamera();
             camera.startCamera(imagePath);
         }
         if (msg == "stop_camera") {
             console.log("stopping camera.");
-            if (camera) camera.stopCamera();
+            camera.stopCamera();
         }
     });
 });
