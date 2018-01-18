@@ -48,18 +48,6 @@ if (osName === "Linux") {
         console.log("from arduino:", data);
         io.emit('rover_message', data);
     });
-
-    var camera = new PiCamera();
-    camera
-        .nopreview()
-        .baseFolder(imagesBasePath)
-        .thumb('0:0:0')
-        .timeout(999999999)
-        .timelapse(250)
-        .width(640)
-        .height(480)
-        .quality(75)
-        .takePicture(path.basename(imagePath));
 }
 
 app.use(express.static(workDir));
@@ -75,7 +63,18 @@ http.listen(4000, function () {
 io.on('connection', function (socket) {
     socket.on('client_command', function (msg) {
         console.log('client_command: ' + msg);
-        if (serial) serial.write('l');      
+        if (msg == "red") {
+            if (serial) serial.write('l');
+        }
+        if (msg == "start_camera") {
+            console.log("starting camera. file name", imagePath);
+            camera = new PiCamera();
+            camera.startCamera(imagePath);
+        }
+        if (msg == "stop_camera") {
+            console.log("stopping camera.");
+            if (camera) camera.stopCamera();
+        }
     });
 });
 
