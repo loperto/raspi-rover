@@ -46,12 +46,20 @@ export default class ControlPanel extends React.Component<Props, State> {
     send = () => {
         this.socket.send({ id: "client_command", payload: "red" });
     }
+    startCamera = () => {
+        this.socket.send({ id: "client_command", payload: "start_camera" });
+    }
+    stopCamera = () => {
+        this.socket.send({ id: "client_command", payload: "stop_camera" });
+    }
 
     render() {
         return (
             <div>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600 }} />
-                <button className="btn btn-default btn-warning" onClick={this.send}>Invia</button>
+                <button className="btn btn-default btn-info" onClick={this.send}>Invia red</button>
+                <button className="btn btn-default btn-success" onClick={this.startCamera}>Start camera</button>
+                <button className="btn btn-default btn-danger" onClick={this.stopCamera}>Stop camera</button>
             </div>
 
         );
