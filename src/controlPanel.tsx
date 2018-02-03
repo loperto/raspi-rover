@@ -46,22 +46,74 @@ export default class ControlPanel extends React.Component<Props, State> {
     send = () => {
         this.socket.send({ id: "client_command", payload: "red" });
     }
+
+    forward = () => {
+        this.socket.send({ id: "client_command", payload: "f" });
+    }
+
+    backward = () => {
+        this.socket.send({ id: "client_command", payload: "b" });
+    }
+
+    left = () => {
+        this.socket.send({ id: "client_command", payload: "l" });
+    }
+
+    right = () => {
+        this.socket.send({ id: "client_command", payload: "r" });
+    }
+
+    stop = () => {
+        this.socket.send({ id: "client_command", payload: "s" });
+    }
+
     startCamera = () => {
         this.socket.send({ id: "client_command", payload: "start_camera" });
     }
     stopCamera = () => {
         this.socket.send({ id: "client_command", payload: "stop_camera" });
     }
-
+    
     render() {
         return (
-            <div>
-                <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600 }} />
-                <button className="btn btn-default btn-info" onClick={this.send}>Invia red</button>
-                <button className="btn btn-default btn-success" onClick={this.startCamera}>Start camera</button>
-                <button className="btn btn-default btn-danger" onClick={this.stopCamera}>Stop camera</button>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600, flex: 1, margin: "auto" }} />
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", }}>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.forward}>
+                        <i className="fa fa-arrow-up" />
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.backward}>
+                        <i className="fa fa-arrow-down" />
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.left}>
+                        <i className="fa fa-arrow-left" />
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.right}>
+                        <i className="fa fa-arrow-right" />
+                    </button>
+                    <button className="btn btn-outline-success"
+                        onClick={this.startCamera}>
+                        <i className="fa fa-camera" /> Start camera
+                    </button>
+                    <button
+                        className="btn btn-outline-danger"
+                        onClick={this.stopCamera}>
+                        <i className="fa fa-camera" /> Stop camera
+                    </button>
+                </div>
             </div>
-
         );
     }
 }
