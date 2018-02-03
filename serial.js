@@ -18,7 +18,7 @@ module.exports = function Serial() {
     }
 
     this.write = function write(message, onError) {
-        this.serial.write('l', function (err) {
+        this.serial.write(message, function (err) {
             if (err) {
                 console.log('error on message', message);
                 onError();

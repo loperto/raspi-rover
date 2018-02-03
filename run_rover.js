@@ -63,6 +63,7 @@ http.listen(4000, function () {
 io.on('connection', function (socket) {
     socket.on('client_command', function (msg) {
         console.log('client_command: ' + msg);
+        
         if (msg == "start_camera") {
             console.log("starting camera. file name", imagePath);
             camera.startCamera(imagePath);
