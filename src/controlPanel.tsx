@@ -43,8 +43,8 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.forceUpdate();
     }
 
-    send = () => {
-        this.socket.send({ id: "client_command", payload: "red" });
+    led = () => {
+        this.socket.send({ id: "client_command", payload: "p" });
     }
 
     forward = () => {
@@ -70,10 +70,11 @@ export default class ControlPanel extends React.Component<Props, State> {
     startCamera = () => {
         this.socket.send({ id: "client_command", payload: "start_camera" });
     }
+
     stopCamera = () => {
         this.socket.send({ id: "client_command", payload: "stop_camera" });
     }
-    
+
     render() {
         return (
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -102,6 +103,18 @@ export default class ControlPanel extends React.Component<Props, State> {
                         className="btn btn-outline-primary"
                         onClick={this.right}>
                         <i className="fa fa-arrow-right" />
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.stop}>
+                        <i className="fa fa-stop" />
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.led}>
+                        <i className="fa fa-circle" /> Led
                     </button>
                     <button className="btn btn-outline-success"
                         onClick={this.startCamera}>
