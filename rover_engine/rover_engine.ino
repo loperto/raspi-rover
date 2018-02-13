@@ -27,6 +27,8 @@ void setup() {
 	pinMode(ch2DirPin, OUTPUT);
 	pinMode(ch2CurPin, OUTPUT);
 	pinMode(ch2Pwm, OUTPUT);
+	servoX.attach(6);
+	servoY.attach(7);
 }
 
 void moveCameraX(unsigned int degrees) {
