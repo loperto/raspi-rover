@@ -75,6 +75,14 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.socket.send({ id: "client_command", payload: "stop_camera" });
     }
 
+    cameraX = () => {
+        this.socket.send({ id: "client_command", payload: "a" });
+    }
+
+    cameraX2 = () => {
+        this.socket.send({ id: "client_command", payload: "b" });
+    }
+
     render() {
         return (
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -124,6 +132,18 @@ export default class ControlPanel extends React.Component<Props, State> {
                         className="btn btn-outline-danger"
                         onClick={this.stopCamera}>
                         <i className="fa fa-camera" /> Stop camera
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.cameraX}>
+                        CameraX 1
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary"
+                        onClick={this.cameraX2}>
+                        CameraX 2
                     </button>
                 </div>
             </div>
