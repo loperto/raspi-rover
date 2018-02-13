@@ -31,6 +31,28 @@ void setup() {
 	servoY.attach(7);
 }
 
+void sweepX() {
+	for (posX = 0; posX <= 180; posX += 1) {
+		servoX.write(posX);
+		delay(15);
+	}
+	for (posX = 180; posX >= 0; posX -= 1) {
+		servoX.write(posX);
+		delay(15);
+	}
+}
+
+void sweepY() {
+	for (posY = 0; posY <= 180; posY += 1) {
+		servoY.write(posY);
+		delay(15);
+	}
+	for (posY = 180; posY >= 0; posY -= 1) {
+		servoY.write(posY);
+		delay(15);
+	}
+}
+
 void moveCameraX(unsigned int degrees) {
 	if (posX == degrees) {
 		return;
@@ -139,10 +161,10 @@ void loop() {
 			engineStop();
 		}
 		else if (c == 'a') {
-			moveCameraX(180);
+			sweepX();
 		}
 		else if (c == 'b') {
-			moveCameraX(0);
+			sweepY();
 		}
 	}
 
