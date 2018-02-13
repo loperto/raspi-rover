@@ -1,3 +1,9 @@
+#include <Servo.h>
+
+Servo servoX;
+Servo servoY;
+unsigned int posX = 0;
+unsigned int posY = 0;
 
 int ledPin = 13;
 const int motorSpeed = 100;
@@ -21,6 +27,42 @@ void setup() {
 	pinMode(ch2DirPin, OUTPUT);
 	pinMode(ch2CurPin, OUTPUT);
 	pinMode(ch2Pwm, OUTPUT);
+}
+
+void moveCameraX(unsigned int degrees) {
+	if (posX == degrees) {
+		return;
+	}
+	else if (posX < degrees) {
+		for (posX; posX <= degrees; posX += 1) {
+			servoX.write(posX);
+			delay(15);
+		}
+	}
+	else if (posX > degrees) {
+		for (posX; posX >= degrees; posX -= 1) {
+			servoX.write(posX);
+			delay(15);
+		}
+	}
+}
+
+void moveCameraY(unsigned int degrees) {
+	if (posY == degrees) {
+		return;
+	}
+	else if (posY < degrees) {
+		for (posY; posY <= degrees; posY += 1) {
+			servoY.write(posY);
+			delay(15);
+		}
+	}
+	else if (posY > degrees) {
+		for (posY; posY >= degrees; posY -= 1) {
+			servoY.write(posY);
+			delay(15);
+		}
+	}
 }
 
 
@@ -93,6 +135,12 @@ void loop() {
 		}
 		else if (c == 's') {
 			engineStop();
+		}
+		else if (c == 'a') {
+			moveCameraX(180);
+		}
+		else if (c == 'b') {
+			moveCameraX(0);
 		}
 	}
 
