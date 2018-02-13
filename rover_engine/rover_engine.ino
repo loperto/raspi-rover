@@ -27,65 +27,29 @@ void setup() {
 	pinMode(ch2DirPin, OUTPUT);
 	pinMode(ch2CurPin, OUTPUT);
 	pinMode(ch2Pwm, OUTPUT);
-	servoX.attach(6);
-	servoY.attach(7);
+	servoX.attach(5);
+	servoY.attach(6);
 }
 
 void sweepX() {
 	for (posX = 0; posX <= 180; posX += 1) {
 		servoX.write(posX);
-		delay(15);
+		delay(60);
 	}
 	for (posX = 180; posX >= 0; posX -= 1) {
 		servoX.write(posX);
-		delay(15);
+		delay(60);
 	}
 }
 
 void sweepY() {
 	for (posY = 0; posY <= 180; posY += 1) {
 		servoY.write(posY);
-		delay(15);
+		delay(60);
 	}
 	for (posY = 180; posY >= 0; posY -= 1) {
 		servoY.write(posY);
-		delay(15);
-	}
-}
-
-void moveCameraX(unsigned int degrees) {
-	if (posX == degrees) {
-		return;
-	}
-	else if (posX < degrees) {
-		for (posX; posX <= degrees; posX += 1) {
-			servoX.write(posX);
-			delay(15);
-		}
-	}
-	else if (posX > degrees) {
-		for (posX; posX >= degrees; posX -= 1) {
-			servoX.write(posX);
-			delay(15);
-		}
-	}
-}
-
-void moveCameraY(unsigned int degrees) {
-	if (posY == degrees) {
-		return;
-	}
-	else if (posY < degrees) {
-		for (posY; posY <= degrees; posY += 1) {
-			servoY.write(posY);
-			delay(15);
-		}
-	}
-	else if (posY > degrees) {
-		for (posY; posY >= degrees; posY -= 1) {
-			servoY.write(posY);
-			delay(15);
-		}
+		delay(60);
 	}
 }
 
