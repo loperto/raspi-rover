@@ -34,22 +34,22 @@ void setup() {
 void sweepX() {
 	for (posX = 0; posX <= 180; posX += 1) {
 		servoX.write(posX);
-		delay(60);
+		delay(20);
 	}
 	for (posX = 180; posX >= 0; posX -= 1) {
 		servoX.write(posX);
-		delay(60);
+		delay(20);
 	}
 }
 
 void sweepY() {
 	for (posY = 0; posY <= 180; posY += 1) {
 		servoY.write(posY);
-		delay(60);
+		delay(20);
 	}
 	for (posY = 180; posY >= 0; posY -= 1) {
 		servoY.write(posY);
-		delay(60);
+		delay(20);
 	}
 }
 
@@ -127,7 +127,7 @@ void loop() {
 		else if (c == 'a') {
 			sweepX();
 		}
-		else if (c == 'b') {
+		else if (c == 'z') {
 			sweepY();
 		}
 	}
