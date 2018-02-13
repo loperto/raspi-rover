@@ -41,9 +41,6 @@ for (let file of fs.readdirSync(imagesBasePath)) {
 if (osName === "Linux") {
     console.log("starting serial.");
     serial = new Serial();
-
-    console.log("starting camera. file name", imagePath);
-
     serial.onMessage(function (data) {
         console.log("from arduino:", data);
         io.emit('rover_message', data);
