@@ -6,7 +6,7 @@ export interface Props {
 
 }
 
-export interface State {
+interface State {
     messages: string[];
 }
 
@@ -44,43 +44,43 @@ export default class ControlPanel extends React.Component<Props, State> {
     }
 
     led = () => {
-        this.socket.send({ id: "client_command", payload: "p" });
+        this.socket.send({ id: "client_command", payload: { type: "led", value: 0 } });
     }
 
     forward = () => {
-        this.socket.send({ id: "client_command", payload: "f" });
+        this.socket.send({ id: "client_command", payload: { type: "forward", value: 0 } });
     }
 
     backward = () => {
-        this.socket.send({ id: "client_command", payload: "b" });
+        this.socket.send({ id: "client_command", payload: { type: "backward", value: 0 } });
     }
 
     left = () => {
-        this.socket.send({ id: "client_command", payload: "l" });
+        this.socket.send({ id: "client_command", payload: { type: "left", value: 0 } });
     }
 
     right = () => {
-        this.socket.send({ id: "client_command", payload: "r" });
+        this.socket.send({ id: "client_command", payload: { type: "right", value: 0 } });
     }
 
     stop = () => {
-        this.socket.send({ id: "client_command", payload: "s" });
+        this.socket.send({ id: "client_command", payload: { type: "stop", value: 0 } });
     }
 
     startCamera = () => {
-        this.socket.send({ id: "client_command", payload: "start_camera" });
+        this.socket.send({ id: "client_command", payload: { type: "start_camera", value: 0 } });
     }
 
     stopCamera = () => {
-        this.socket.send({ id: "client_command", payload: "stop_camera" });
+        this.socket.send({ id: "client_command", payload: { type: "stop_camera", value: 0 } });
     }
 
     cameraX = () => {
-        this.socket.send({ id: "client_command", payload: "a" });
+        this.socket.send({ id: "client_command", payload: { type: "cameraX", value: 0 } });
     }
 
-    cameraX2 = () => {
-        this.socket.send({ id: "client_command", payload: "b" });
+    cameraY = () => {
+        this.socket.send({ id: "client_command", payload: { type: "cameraY", value: 0 } });
     }
 
     render() {
@@ -142,7 +142,7 @@ export default class ControlPanel extends React.Component<Props, State> {
                     <button
                         type="button"
                         className="btn btn-outline-primary"
-                        onClick={this.cameraX2}>
+                        onClick={this.cameraY}>
                         CameraX 2
                     </button>
                 </div>

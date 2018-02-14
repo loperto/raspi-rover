@@ -3,7 +3,7 @@ import { TEvent, Event } from "./Events";
 
 export interface Command {
     id: string;
-    payload: string;
+    payload: { type: string, value: number };
 }
 
 export class Socket {
@@ -18,7 +18,7 @@ export class Socket {
     }
 
     public send(command: Command): void {
-        this.socket.emit(command.id, command.payload);
+        this.socket.emit(command.id, JSON.stringify(command.payload));
     }
 
     private onMessage(payload: string) {

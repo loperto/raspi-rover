@@ -1,9 +1,10 @@
+#include <ArduinoJson.h>
 #include <Servo.h>
 
 Servo servoX;
 Servo servoY;
-unsigned int posX = 0;
-unsigned int posY = 0;
+int posX = 1;
+int posY = 1;
 
 int ledPin = 13;
 const int motorSpeed = 100;
@@ -29,28 +30,45 @@ void setup() {
 	pinMode(ch2Pwm, OUTPUT);
 	servoX.attach(5);
 	servoY.attach(6);
+	servoX.write(posX);
+	servoY.write(posY);
 }
 
-void sweepX() {
-	for (posX = 0; posX <= 180; posX += 1) {
-		servoX.write(posX);
-		delay(20);
+void moveCameraX(int degrees) {
+	if (degrees < 0 || degrees > 180 || degrees == posX) {
+		return;
 	}
-	for (posX = 180; posX >= 0; posX -= 1) {
-		servoX.write(posX);
-		delay(20);
+	else if (posX < degrees) {
+		for (posX; posX <= degrees; posX += 1) {
+			servoX.write(posX);
+			delay(20);
+		}
+	}
+	else if (posX > degrees) {
+		for (posX; posX >= degrees; posX -= 1) {
+			servoX.write(posX);
+			delay(20);
+		}
 	}
 }
 
-void sweepY() {
-	for (posY = 0; posY <= 180; posY += 1) {
-		servoY.write(posY);
-		delay(20);
+void moveCameraY(int degrees) {
+	if (degrees < 0 || degrees > 180 || degrees == posY) {
+		return;
 	}
-	for (posY = 180; posY >= 0; posY -= 1) {
-		servoY.write(posY);
-		delay(20);
+	else if (posY < degrees) {
+		for (posY; posY <= degrees; posY += 1) {
+			servoY.write(posY);
+			delay(20);
+		}
 	}
+	else if (posY > degrees) {
+		for (posY; posY >= degrees; posY -= 1) {
+			servoY.write(posY);
+			delay(20);
+		}
+	}
+	return;
 }
 
 
@@ -102,33 +120,51 @@ void engineStop() {
 	ch2(0, true);
 }
 
+void execCommand(const char* type, int value) {
+	if (strcmp(type, "forward") == 0) {
+		forward();
+	}
+	else if (strcmp(type, "backward") == 0) {
+		backward();
+	}
+	else if (strcmp(type, "left") == 0) {
+		left();
+	}
+	else if (strcmp(type, "right") == 0) {
+		right();
+	}
+	else if (strcmp(type, "stop") == 0) {
+		engineStop();
+	}
+	else if (strcmp(type, "cameraX") == 0) {
+		moveCameraX(value);
+	}
+	else if (strcmp(type, "cameraY") == 0) {
+		moveCameraY(value);
+	}
+	else if (strcmp(type, "led") == 0) {
+		toggleLed();
+	}
+	else {
+		Serial.print(type);
+		Serial.println(" command not found!");
+	}
+}
+
 void loop() {
 	if (Serial.available()) {
-		char c = Serial.read();
-		if (c == 'p') {
-			toggleLed();
-			Serial.println("recived");
+		StaticJsonBuffer<200> jsonBuffer;
+		JsonObject& root = jsonBuffer.parse(Serial);
+		if (!root.success()) {
+			Serial.println("json parse failed");
+			return;
 		}
-		else if (c == 'f') {
-			forward();
-		}
-		else if (c == 'b') {
-			backward();
-		}
-		else if (c == 'l') {
-			left();
-		}
-		else if (c == 'r') {
-			right();
-		}
-		else if (c == 's') {
-			engineStop();
-		}
-		else if (c == 'a') {
-			sweepX();
-		}
-		else if (c == 'z') {
-			sweepY();
+		else {
+			const char* type = root["type"];
+			int value = root["value"];
+			Serial.println(type);
+			Serial.println(value);
+			execCommand(type, value);
 		}
 	}
 
