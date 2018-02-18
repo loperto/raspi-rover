@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Socket } from "./socket";
+import RangeInput from "./common/rangeInput/rangeInput";
 const image = require("./photo.jpg");
 
 export interface Props {
@@ -75,19 +76,20 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.socket.send({ id: "client_command", payload: { type: "stop_camera", value: 0 } });
     }
 
-    cameraX = () => {
-        this.socket.send({ id: "client_command", payload: { type: "cameraX", value: 0 } });
+    onChangeCameraX = (angle: number) => {
+        this.socket.send({ id: "client_command", payload: { type: "cameraX", value: angle } });
     }
 
-    cameraY = () => {
-        this.socket.send({ id: "client_command", payload: { type: "cameraY", value: 0 } });
+    onChangeCameraY = (angle: number) => {
+        this.socket.send({ id: "client_command", payload: { type: "cameraY", value: angle } });
     }
+
 
     render() {
         return (
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600, flex: 1, margin: "auto" }} />
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", }}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <button
                         type="button"
                         className="btn btn-outline-primary"
@@ -133,18 +135,21 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onClick={this.stopCamera}>
                         <i className="fa fa-camera" /> Stop camera
                     </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.cameraX}>
-                        CameraX 1
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.cameraY}>
-                        CameraX 2
-                    </button>
+
+                </div>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                    <RangeInput
+                        label="camera X"
+                        min={0}
+                        max={180}
+                        step={30}
+                        onChange={this.onChangeCameraX} />
+                    <RangeInput
+                        label="camera Y"
+                        min={0}
+                        max={180}
+                        step={30}
+                        onChange={this.onChangeCameraY} />
                 </div>
             </div>
         );
