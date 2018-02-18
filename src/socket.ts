@@ -18,7 +18,7 @@ export class Socket {
     }
 
     public send(command: Command): void {
-        this.socket.emit(command.id, JSON.stringify(command.payload));
+        this.socket.emit(command.id, JSON.stringify(command));
     }
 
     private onMessage(payload: string) {

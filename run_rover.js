@@ -58,19 +58,19 @@ http.listen(4000, function () {
 });
 
 io.on('connection', function (socket) {
-    socket.on('client_command', function (payload) {
-        console.log('client_command: ' + payload);
-        if (payload == "start_camera") {
+    socket.on('client_command', function (command) {
+        console.log('client_command: ' + command);
+        if (command.type == "start_camera") {
             console.log("starting camera. file name", imagePath);
             camera.startCamera(imagePath);
         }
-        else if (payload == "stop_camera") {
+        else if (command.type == "stop_camera") {
             console.log("stopping camera.");
             camera.stopCamera();
         }
         else {
             if (serial)
-                serial.write(payload);
+                serial.write(command);
         }
     });
 });
