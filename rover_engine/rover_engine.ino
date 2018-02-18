@@ -12,12 +12,12 @@ const int motorSpeed = 100;
 //CH1 right side
 int ch1DirPin = 3;
 int ch1CurPin = 4;
-int ch1Pwm = 9;
+int ch1Pwm = 5;
 
 //CH2 left side
 int ch2DirPin = 7;
 int ch2CurPin = 8;
-int ch2Pwm = 10;
+int ch2Pwm = 6;
 
 void setup() {
 	Serial.begin(9600);
@@ -28,8 +28,8 @@ void setup() {
 	pinMode(ch2DirPin, OUTPUT);
 	pinMode(ch2CurPin, OUTPUT);
 	pinMode(ch2Pwm, OUTPUT);
-	servoX.attach(5);
-	servoY.attach(6);
+	servoX.attach(9);
+	servoY.attach(10);
 	servoX.write(posX);
 	servoY.write(posY);
 }
