@@ -2,8 +2,8 @@ import * as socketIo from "socket.io-client";
 import { TEvent, Event } from "./Events";
 
 export interface Command {
-    id: string;
-    payload: { type: string, value: number };
+    type: string;
+    value: number;
 }
 
 export class Socket {
@@ -18,7 +18,7 @@ export class Socket {
     }
 
     public send(command: Command): void {
-        this.socket.emit(command.id, JSON.stringify(command));
+        this.socket.emit("client_command", JSON.stringify(command));
     }
 
     private onMessage(payload: string) {

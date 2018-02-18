@@ -45,43 +45,43 @@ export default class ControlPanel extends React.Component<Props, State> {
     }
 
     led = () => {
-        this.socket.send({ id: "client_command", payload: { type: "led", value: 0 } });
+        this.socket.send({ type: "led", value: 0 });
     }
 
     forward = () => {
-        this.socket.send({ id: "client_command", payload: { type: "forward", value: 0 } });
+        this.socket.send({ type: "forward", value: 0 });
     }
 
     backward = () => {
-        this.socket.send({ id: "client_command", payload: { type: "backward", value: 0 } });
+        this.socket.send({ type: "backward", value: 0 });
     }
 
     left = () => {
-        this.socket.send({ id: "client_command", payload: { type: "left", value: 0 } });
+        this.socket.send({ type: "left", value: 0 });
     }
 
     right = () => {
-        this.socket.send({ id: "client_command", payload: { type: "right", value: 0 } });
+        this.socket.send({ type: "right", value: 0 });
     }
 
     stop = () => {
-        this.socket.send({ id: "client_command", payload: { type: "stop", value: 0 } });
+        this.socket.send({ type: "stop", value: 0 });
     }
 
     startCamera = () => {
-        this.socket.send({ id: "client_command", payload: { type: "start_camera", value: 0 } });
+        this.socket.send({ type: "start_camera", value: 0 });
     }
 
     stopCamera = () => {
-        this.socket.send({ id: "client_command", payload: { type: "stop_camera", value: 0 } });
+        this.socket.send({ type: "stop_camera", value: 0 });
     }
 
     onChangeCameraX = (angle: number) => {
-        this.socket.send({ id: "client_command", payload: { type: "cameraX", value: angle } });
+        this.socket.send({ type: "cameraX", value: angle });
     }
 
     onChangeCameraY = (angle: number) => {
-        this.socket.send({ id: "client_command", payload: { type: "cameraY", value: angle } });
+        this.socket.send({ type: "cameraY", value: angle });
     }
 
 

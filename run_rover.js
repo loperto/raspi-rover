@@ -59,12 +59,13 @@ http.listen(4000, function () {
 
 io.on('connection', function (socket) {
     socket.on('client_command', function (command) {
-        console.log('client_command: ' + command);
-        if (command.payload.type == "start_camera") {
+        console.log('message:', command);
+        let obj = JSON.parse(command);
+        if (obj.type == "start_camera") {
             console.log("starting camera. file name", imagePath);
             camera.startCamera(imagePath);
         }
-        else if (command.payload.type == "stop_camera") {
+        else if (obj.type == "stop_camera") {
             console.log("stopping camera.");
             camera.stopCamera();
         }
