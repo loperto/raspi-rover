@@ -18,7 +18,9 @@ export class Socket {
     }
 
     public send(command: Command): void {
-        this.socket.emit("client_command", JSON.stringify(command));
+        const stringCommand = JSON.stringify(command);
+        console.log("sended command:", stringCommand);
+        this.socket.emit("client_command", stringCommand);
     }
 
     private onMessage(payload: string) {

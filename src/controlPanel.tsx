@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Socket } from "./socket";
 import RangeInput from "./common/rangeInput/rangeInput";
+import DirectionPanel from "./directionPanel";
 const image = require("./photo.jpg");
 
 export interface Props {
@@ -10,6 +11,7 @@ export interface Props {
 interface State {
     messages: string[];
 }
+
 
 export default class ControlPanel extends React.Component<Props, State> {
 
@@ -43,6 +45,7 @@ export default class ControlPanel extends React.Component<Props, State> {
         console.log("image refreshed!");
         this.forceUpdate();
     }
+
 
     led = () => {
         this.socket.send({ type: "led", value: 0 });
@@ -90,39 +93,18 @@ export default class ControlPanel extends React.Component<Props, State> {
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600, flex: 1, margin: "auto" }} />
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                    <DirectionPanel
+                        onForward={this.forward}
+                        onBackward={this.backward}
+                        onLeft={this.left}
+                        onRight={this.right}
+                        onStop={this.stop} />
                     <button
                         type="button"
                         className="btn btn-outline-primary"
-                        onClick={this.forward}>
-                        <i className="fa fa-arrow-up" />
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.backward}>
-                        <i className="fa fa-arrow-down" />
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.left}>
-                        <i className="fa fa-arrow-left" />
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.right}>
-                        <i className="fa fa-arrow-right" />
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
-                        onClick={this.stop}>
-                        <i className="fa fa-stop" />
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-outline-primary"
+                        onChange={(e: any) => console.log(e)}
+                        onMouseDown={() => console.log("mouse down")}
+                        onMouseUp={() => console.log("mouse up")}
                         onClick={this.led}>
                         <i className="fa fa-circle" /> Led
                     </button>
