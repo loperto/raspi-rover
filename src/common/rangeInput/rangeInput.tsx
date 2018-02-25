@@ -6,6 +6,7 @@ interface IProps {
     min?: number;
     max?: number;
     step?: number;
+    initialValue?: number;
     onChange: (value: number) => void;
 }
 
@@ -17,7 +18,7 @@ export default class RangeInput extends React.Component<IProps, State>{
     constructor(props: IProps) {
         super(props);
         this.state = {
-            value: 1,
+            value: props.initialValue || 1,
         };
     }
 

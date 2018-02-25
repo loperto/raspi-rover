@@ -143,12 +143,13 @@ export default class ControlPanel extends React.Component<Props, State> {
                         min={0}
                         max={180}
                         step={30}
+                        initialValue={90}
                         onChange={this.onChangeCameraX} />
                     <RangeInput
                         label="camera Y"
                         min={0}
                         max={180}
-                        step={30}
+                        step={10}
                         onChange={this.onChangeCameraY} />
                 </div>
             </div>
