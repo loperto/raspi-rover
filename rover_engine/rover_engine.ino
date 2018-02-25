@@ -3,21 +3,20 @@
 
 Servo servoX;
 Servo servoY;
-int posX = 1;
+int posX = 90;
 int posY = 1;
 
-int ledPin = 13;
+const int ledPin = 13;
+
 const int motorSpeed = 100;
-
 //CH1 right side
-int ch1DirPin = 3;
-int ch1CurPin = 4;
-int ch1Pwm = 5;
-
+const int ch1DirPin = 3;
+const int ch1CurPin = 4;
+const int ch1Pwm = 5;
 //CH2 left side
-int ch2DirPin = 7;
-int ch2CurPin = 8;
-int ch2Pwm = 6;
+const int ch2DirPin = 7;
+const int ch2CurPin = 8;
+const int ch2Pwm = 6;
 
 void setup() {
 	Serial.begin(9600);
@@ -119,6 +118,7 @@ void engineStop() {
 	ch1(0, true);
 	ch2(0, true);
 }
+
 
 void execCommand(const char* type, int value) {
 	if (strcmp(type, "forward") == 0) {
