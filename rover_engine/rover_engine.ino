@@ -1,6 +1,9 @@
 #include <ArduinoJson.h>
 #include <Servo.h>
 
+unsigned long lastTelemetrySend = 0;
+unsigned int telemetryFrequency = 1000;
+
 Servo servoX;
 Servo servoY;
 int posX = 90;
@@ -151,7 +154,21 @@ void execCommand(const char* type, int value) {
 	}
 }
 
+
+void sendTelemetry() {
+	StaticJsonBuffer<200> jsonBuffer;
+	JsonObject& root = jsonBuffer.createObject();
+	root["sensor"] = "gps";
+	root["time"] = analogRead(A0);
+	root.printTo(Serial);
+}
+
+
 void loop() {
+	if ((millis() - lastTelemetrySend) > telemetryFrequency) {
+		sendTelemetry();
+		lastTelemetrySend = millis();
+	}
 	if (Serial.available()) {
 		StaticJsonBuffer<200> jsonBuffer;
 		JsonObject& root = jsonBuffer.parse(Serial);
