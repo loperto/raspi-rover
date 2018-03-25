@@ -2,7 +2,7 @@
 #include <Servo.h>
 
 unsigned long lastTelemetrySend = 0;
-unsigned int telemetryFrequency = 2000;
+unsigned int telemetryFrequency = 500;
 
 Servo servoX;
 Servo servoY;
@@ -22,7 +22,7 @@ const int ch2CurPin = 8;
 const int ch2Pwm = 6;
 
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	pinMode(ledPin, OUTPUT);
 	pinMode(ch1DirPin, OUTPUT);
 	pinMode(ch1CurPin, OUTPUT);
@@ -159,8 +159,9 @@ void sendTelemetry() {
 	StaticJsonBuffer<200> jsonBuffer;
 	JsonObject& root = jsonBuffer.createObject();
 	root["s"] = "gps";
-	root["t"] = 10;
+	root["t"] = millis();
 	root.printTo(Serial);
+	Serial.println();
 }
 
 
