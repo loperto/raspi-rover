@@ -1,18 +1,15 @@
 var SerialPort = require('serialport');
 
-module.exports = function Serial() {
-    this.serial = new SerialPort('/dev/ttyACM0', {
+module.exports = function Serial(osName) {
+    const port = osName === "Linux" ? "/dev/ttyACM0" : "COM4"
+    this.serial = new SerialPort(port, {
         baudRate: 9600,
     });
 
     this.serial.on('open', () => console.log('serial port open'));
 
-    // this.serial.on('data', function (data) {
-    //     console.log('Data:', data.toString());
-    // });
-
     this.onMessage = function onMessage(callback) {
-        this.serial.on('data', function (data) {
+        this.serial.on('data', (data) => {
             callback(data.toString());
         });
     }

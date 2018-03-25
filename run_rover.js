@@ -38,14 +38,13 @@ for (let file of fs.readdirSync(imagesBasePath)) {
     }
 }
 
-if (osName === "Linux") {
-    console.log("starting serial.");
-    serial = new Serial();
-    serial.onMessage(function (data) {
-        console.log("from arduino:", data);
-        io.emit('rover_message', data);
-    });
-}
+console.log("starting serial.");
+serial = new Serial(osName);
+serial.onMessage(function (data) {
+    console.log("from arduino:", data);
+    io.emit('rover_message', data);
+});
+
 
 app.use(express.static(workDir));
 
