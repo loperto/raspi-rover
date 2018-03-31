@@ -2,7 +2,7 @@ import * as React from "react";
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/font-awesome/css/font-awesome.min.css";
-import ControlPanel from "./controlPanel";
+import ControlPanel from "./controlPanel/controlPanel";
 
 class App extends React.Component {
 

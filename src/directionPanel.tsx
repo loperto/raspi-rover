@@ -92,8 +92,8 @@ export default class DirectionPanel extends React.Component<IProps, State>{
 
     getButtonClass = (type: DirectionButton) => {
         if (this.state.currentButtonPressed === type)
-            return "btn btn-primary";
-        else return "btn btn-outline-primary";
+            return "btn btn-cmd btn-primary";
+        else return "btn btn-cmd btn-outline-primary";
     }
 
     render() {

@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Socket } from "./socket";
-import RangeInput from "./common/rangeInput/rangeInput";
-import DirectionPanel from "./directionPanel";
-const image = require("./photo.jpg");
+import { Socket } from "../socket";
+import "./controlPanel.css";
+import RangeInput from "../common/rangeInput/rangeInput";
+import DirectionPanel from "../directionPanel";
+const image = require("../photo.jpg");
 
 export interface Props {
 
@@ -91,7 +92,7 @@ export default class ControlPanel extends React.Component<Props, State> {
     render() {
         return (
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                <img src={`${image}?${new Date().valueOf()}`} style={{ width: 800, height: 600, flex: 1, margin: "auto" }} />
+                <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
                         onForward={this.forward}
@@ -101,19 +102,19 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onStop={this.stop} />
                     <button
                         type="button"
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary btn-cmd"
                         onChange={(e: any) => console.log(e)}
                         onMouseDown={() => console.log("mouse down")}
                         onMouseUp={() => console.log("mouse up")}
                         onClick={this.led}>
                         <i className="fa fa-circle" /> Led
                     </button>
-                    <button className="btn btn-outline-success"
+                    <button className="btn btn-outline-success btn-cmd"
                         onClick={this.startCamera}>
                         <i className="fa fa-camera" /> Start camera
                     </button>
                     <button
-                        className="btn btn-outline-danger"
+                        className="btn btn-outline-danger btn-cmd"
                         onClick={this.stopCamera}>
                         <i className="fa fa-camera" /> Stop camera
                     </button>
