@@ -1,3 +1,4 @@
+#include <NewPing.h>
 #include <ArduinoJson.h>
 #include <Servo.h>
 
@@ -20,6 +21,12 @@ const int ch1Pwm = 5;
 const int ch2DirPin = 7;
 const int ch2CurPin = 8;
 const int ch2Pwm = 6;
+
+#define TRIGGER_PIN  12
+#define ECHO_PIN     11
+#define MAX_DISTANCE 100
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 void setup() {
 	Serial.begin(115200);
@@ -159,7 +166,7 @@ void sendTelemetry() {
 	StaticJsonBuffer<200> jsonBuffer;
 	JsonObject& root = jsonBuffer.createObject();
 	root["s"] = "gps";
-	root["t"] = millis();
+	root["dist"] = sonar.ping_cm();
 	root.printTo(Serial);
 	Serial.println();
 }
