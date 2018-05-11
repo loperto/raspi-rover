@@ -10,9 +10,8 @@ export interface Props {
 }
 
 interface State {
-    messages: string[];
+    telemetry: { distance: number | null };
 }
-
 
 export default class ControlPanel extends React.Component<Props, State> {
 
@@ -20,7 +19,7 @@ export default class ControlPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            messages: [],
+            telemetry: { distance: null },
         };
     }
 
@@ -38,15 +37,14 @@ export default class ControlPanel extends React.Component<Props, State> {
 
     messageListener = (payload: string) => {
         console.log("server message:", payload);
-        let messages = [...this.state.messages, payload];
-        this.setState({ messages });
+        const telemetry = JSON.parse(payload);
+        this.setState({ telemetry });
     }
 
     imageListener = () => {
         console.log("image refreshed!");
         this.forceUpdate();
     }
-
 
     led = () => {
         this.socket.send({ type: "led", value: 0 });
@@ -88,11 +86,13 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.socket.send({ type: "cameraY", value: angle });
     }
 
-
     render() {
         return (
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
+                <div style={{ alignSelf: "flex-start" }}>
+                    {`Distance: ${this.state.telemetry.distance || "-"}`}
+                </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
                         onForward={this.forward}
@@ -118,7 +118,6 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onClick={this.stopCamera}>
                         <i className="fa fa-camera" /> Stop camera
                     </button>
-
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <RangeInput
@@ -135,7 +134,7 @@ export default class ControlPanel extends React.Component<Props, State> {
                         step={10}
                         onChange={this.onChangeCameraY} />
                 </div>
-            </div>
+            </div >
         );
     }
 }
