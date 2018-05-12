@@ -10,7 +10,7 @@ export interface Props {
 }
 
 interface State {
-    telemetry: { distance: number | null };
+    telemetry: { dist: number | null };
 }
 
 export default class ControlPanel extends React.Component<Props, State> {
@@ -19,7 +19,7 @@ export default class ControlPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            telemetry: { distance: null },
+            telemetry: { dist: null },
         };
     }
 
