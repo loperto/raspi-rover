@@ -91,7 +91,7 @@ export default class ControlPanel extends React.Component<Props, State> {
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
                 <div style={{ alignSelf: "flex-start" }}>
-                    {`Distance: ${this.state.telemetry.distance || "-"}`}
+                    {`Distance: ${this.state.telemetry.dist || "-"}`}
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
