@@ -1,7 +1,7 @@
 var SerialPort = require('serialport');
 
 module.exports = function Serial(osName) {
-    const port = osName === "Linux" ? "/dev/ttyACM0" : "COM11";
+    const port = osName === "Linux" ? "/dev/ttyACM0" : "COM4";
     let message = "";
     this.serial = new SerialPort(port, {
         baudRate: 115200,

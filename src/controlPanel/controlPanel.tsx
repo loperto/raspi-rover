@@ -50,6 +50,10 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.socket.send({ type: "led", value: 0 });
     }
 
+    beep = () => {
+        this.socket.send({ type: "beep", value: 300 });
+    }
+
     forward = () => {
         this.socket.send({ type: "forward", value: 0 });
     }
@@ -91,7 +95,10 @@ export default class ControlPanel extends React.Component<Props, State> {
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
                 <div style={{ alignSelf: "flex-start" }}>
-                    {`Distance: ${this.state.telemetry && this.state.telemetry.dist || "-"}`}
+                    <div>{`Temperature: ${this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"}`}</div>
+                    <div>{`Distance: ${this.state.telemetry && this.state.telemetry.dist || "-"}`}</div>
+                    <div>{`Pitch: ${this.state.telemetry && this.state.telemetry.pitch.toFixed(0) || "-"}`}</div>
+                    <div>{`Roll: ${this.state.telemetry && this.state.telemetry.roll.toFixed(0) || "-"}`}</div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
@@ -108,6 +115,13 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onMouseUp={() => console.log("mouse up")}
                         onClick={this.led}>
                         <i className="fa fa-circle" /> Led
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-outline-primary btn-cmd"
+                        onChange={(e: any) => console.log(e)}
+                        onClick={this.beep}>
+                        <i className="fa fa-volume-up" /> Beep
                     </button>
                     <button className="btn btn-outline-success btn-cmd"
                         onClick={this.startCamera}>
@@ -130,8 +144,8 @@ export default class ControlPanel extends React.Component<Props, State> {
                     <RangeInput
                         label="camera Y"
                         min={0}
-                        max={180}
-                        step={10}
+                        max={100}
+                        step={15}
                         onChange={this.onChangeCameraY} />
                 </div>
             </div >

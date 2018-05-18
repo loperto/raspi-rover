@@ -52,12 +52,12 @@ void setup()
 
 	Wire.begin();
 	mpu6050.begin();
-	mpu6050.calcGyroOffsets(true);
+	mpu6050.calcGyroOffsets(false);
 
 	//analogWrite(5, 100);
 	//analogWrite(6, 100);
 
-	/*beep(1000);*/
+	//beep(500);
 }
 
 void moveCameraX(int degrees)
