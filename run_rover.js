@@ -42,7 +42,7 @@ console.log("starting serial.");
 serial = new Serial(osName);
 
 serial.onMessage((data) => {
-    console.log("from arduino:", data);
+    // console.log("from arduino:", data);
     io.emit('rover_message', data);
 });
 
