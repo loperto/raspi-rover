@@ -14,7 +14,7 @@ Servo servoY;
 int posX = 90;
 int posY = 1;
 
-const int motorSpeed = 150;
+unsigned int motorSpeed = 150;
 //CH1 right side
 const int ch1DirectionPin = 4;
 const int ch1PwmPin = 5;
@@ -164,6 +164,11 @@ void engineStop()
 	ch2(0, true);
 }
 
+void changeSpeed(int value)
+{
+	motorSpeed = value;
+}
+
 void beep(unsigned int duration)
 {
 	tone(buzzerPin, 1000, duration);
@@ -192,6 +197,10 @@ void execCommand(const char *type, int value)
 	else if (strcmp(type, "stop") == 0)
 	{
 		engineStop();
+	}
+	if (strcmp(type, "speed") == 0)
+	{
+		changeSpeed(value);
 	}
 	else if (strcmp(type, "cameraX") == 0)
 	{
