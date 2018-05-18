@@ -29,7 +29,7 @@ module.exports = function Camera() {
         this.running = true;
 
         this.child.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
+            // console.log(`stdout: ${data}`);
         });
         this.child.stderr.on('data', (data) => {
             console.log(`stderr: ${data}`);
