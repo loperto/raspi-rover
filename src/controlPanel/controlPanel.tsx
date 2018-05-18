@@ -10,7 +10,7 @@ export interface Props {
 }
 
 interface State {
-    telemetry: { dist: number | null };
+    telemetry: { dist: number, temp: number, pitch: number, roll: number } | null;
 }
 
 export default class ControlPanel extends React.Component<Props, State> {
@@ -19,7 +19,7 @@ export default class ControlPanel extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            telemetry: { dist: null },
+            telemetry: null,
         };
     }
 
@@ -91,7 +91,7 @@ export default class ControlPanel extends React.Component<Props, State> {
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
                 <div style={{ alignSelf: "flex-start" }}>
-                    {`Distance: ${this.state.telemetry.dist || "-"}`}
+                    {`Distance: ${this.state.telemetry && this.state.telemetry.dist || "-"}`}
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel

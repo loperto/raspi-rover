@@ -1,6 +1,10 @@
+#include <MPU6050_tockn.h>
 #include <NewPing.h>
 #include <ArduinoJson.h>
 #include <Servo.h>
+#include <Wire.h>
+
+MPU6050 mpu6050(Wire);
 
 unsigned long lastTelemetrySend = 0;
 unsigned int telemetryFrequency = 500;
@@ -46,6 +50,9 @@ void setup()
 	servoX.write(posX);
 	servoY.write(posY);
 
+	Wire.begin();
+	mpu6050.begin();
+	mpu6050.calcGyroOffsets(true);
 
 	//analogWrite(5, 100);
 	//analogWrite(6, 100);
@@ -211,9 +218,13 @@ void execCommand(const char *type, int value)
 
 void sendTelemetry()
 {
+	mpu6050.update();
 	StaticJsonBuffer<200> jsonBuffer;
 	JsonObject &root = jsonBuffer.createObject();
 	root["dist"] = sonar.ping_cm();
+	root["temp"] = mpu6050.getTemp();
+	root["pitch"] = mpu6050.getAccAngleX();
+	root["roll"] = mpu6050.getAccAngleY();
 	root.printTo(Serial);
 	Serial.println();
 }
