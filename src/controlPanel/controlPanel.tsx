@@ -10,6 +10,7 @@ export interface Props {
 }
 
 interface State {
+    currentSpeed: number;
     telemetry: { dist: number, temp: number, pitch: number, roll: number } | null;
 }
 
@@ -20,6 +21,7 @@ export default class ControlPanel extends React.Component<Props, State> {
         super(props);
         this.state = {
             telemetry: null,
+            currentSpeed: 100,
         };
     }
 
@@ -90,6 +92,11 @@ export default class ControlPanel extends React.Component<Props, State> {
         this.socket.send({ type: "cameraY", value: angle });
     }
 
+    onChangeSpeed = (speed: number) => {
+        this.socket.send({ type: "speed", value: speed });
+        this.setState({ currentSpeed: speed });
+    }
+
     render() {
         return (
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
@@ -99,6 +106,7 @@ export default class ControlPanel extends React.Component<Props, State> {
                     <div>{`Distance: ${this.state.telemetry && this.state.telemetry.dist || "-"}`}</div>
                     <div>{`Pitch: ${this.state.telemetry && this.state.telemetry.pitch.toFixed(0) || "-"}`}</div>
                     <div>{`Roll: ${this.state.telemetry && this.state.telemetry.roll.toFixed(0) || "-"}`}</div>
+                    <div>{`Speed: ${this.state.currentSpeed}`}</div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
@@ -107,6 +115,7 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onLeft={this.left}
                         onRight={this.right}
                         onStop={this.stop} />
+
                     <button
                         type="button"
                         className="btn btn-outline-primary btn-cmd"
@@ -147,6 +156,13 @@ export default class ControlPanel extends React.Component<Props, State> {
                         max={100}
                         step={15}
                         onChange={this.onChangeCameraY} />
+                    <RangeInput
+                        label="Speed"
+                        initialValue={this.state.currentSpeed}
+                        min={100}
+                        max={250}
+                        step={10}
+                        onChange={this.onChangeSpeed} />
                 </div>
             </div >
         );
