@@ -3,6 +3,7 @@ import { Socket } from "../socket";
 import "./controlPanel.css";
 import RangeInput from "../common/rangeInput/rangeInput";
 import DirectionPanel from "../directionPanel";
+import InclinationMonitor from "./inclinationMonitor";
 const image = require("../photo.jpg");
 
 export interface Props {
@@ -98,15 +99,18 @@ export default class ControlPanel extends React.Component<Props, State> {
     }
 
     render() {
+        let pitch = this.state.telemetry && this.state.telemetry.pitch;
+        let roll = this.state.telemetry && this.state.telemetry.roll;
         return (
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
                 <div style={{ alignSelf: "flex-start" }}>
                     <div>{`Temperature: ${this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"}`}</div>
                     <div>{`Distance: ${this.state.telemetry && this.state.telemetry.dist || "-"}`}</div>
-                    <div>{`Pitch: ${this.state.telemetry && this.state.telemetry.pitch.toFixed(0) || "-"}`}</div>
-                    <div>{`Roll: ${this.state.telemetry && this.state.telemetry.roll.toFixed(0) || "-"}`}</div>
+                    <div>{`Pitch: ${pitch || "-"}`}</div>
+                    <div>{`Roll: ${roll || "-"}`}</div>
                     <div>{`Speed: ${this.state.currentSpeed}`}</div>
+                    <InclinationMonitor pitch={roll || 0} roll={roll || 0} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
@@ -115,7 +119,6 @@ export default class ControlPanel extends React.Component<Props, State> {
                         onLeft={this.left}
                         onRight={this.right}
                         onStop={this.stop} />
-
                     <button
                         type="button"
                         className="btn btn-outline-primary btn-cmd"
