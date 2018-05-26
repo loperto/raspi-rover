@@ -99,8 +99,8 @@ export default class ControlPanel extends React.Component<Props, State> {
     }
 
     render() {
-        let pitch = this.state.telemetry && this.state.telemetry.pitch;
-        let roll = this.state.telemetry && this.state.telemetry.roll;
+        let pitch = this.state.telemetry && (this.state.telemetry.pitch * -1)
+        let roll = this.state.telemetry && (this.state.telemetry.roll * -1);
         return (
             <div style={{ display: "flex", flexDirection: "column", height: "100%", backgroundColor: "black" }}>
                 <img src={`${image}?${new Date().valueOf()}`} style={{ flex: 1 }} />
@@ -110,7 +110,7 @@ export default class ControlPanel extends React.Component<Props, State> {
                     <div>{`Pitch: ${pitch || "-"}`}</div>
                     <div>{`Roll: ${roll || "-"}`}</div>
                     <div>{`Speed: ${this.state.currentSpeed}`}</div>
-                    <InclinationMonitor pitch={roll || 0} roll={roll || 0} />
+                    <InclinationMonitor pitch={pitch || 0} roll={roll || 0} />
                 </div>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
                     <DirectionPanel
