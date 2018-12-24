@@ -1,0 +1,60 @@
+"use strict";
+const WebSocketServer = require("ws").Server;
+const VideoStreamer = require("./video-streamer");
+const Serial = require("./serial");
+const os = require('os');
+
+class Server {
+    constructor(server) {
+        this.options = {
+            width: 960,
+            height: 540,
+            fps: 12,
+        };
+        this.socketServer = new WebSocketServer({ server });
+        this.streamer = new VideoStreamer(this.socketServer, this.options);
+        this.new_client = this.new_client.bind(this);
+        this.socketServer.on('connection', this.new_client);
+    }
+
+
+    new_client(socket) {
+        var that = this;
+        console.log('New guy');
+
+        console.log("starting serial.");
+        this.serial = new Serial(os.type());
+        this.serial.onMessage((data) => {
+            socket.send(data);
+        });
+
+        socket.send(JSON.stringify({
+            action: "init",
+            width: this.options.width,
+            height: this.options.height,
+        }));
+
+        socket.on("message", function (command) {
+            console.log('message:', command);
+            let obj = JSON.parse(command);
+
+            if (obj.type == "start_camera") {
+                that.streamer.start_feed();
+            }
+            else if (obj.type == "stop_camera") {
+                that.streamer.stop_feed();
+            }
+            else {
+                if (that.serial)
+                    that.serial.write(command);
+            }
+        });
+
+        socket.on('close', function () {
+            that.streamer.stop_feed();
+            console.log('stopping client interval');
+        });
+    }
+};
+
+module.exports = Server;
