@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { Guid } from "./guid";
+import Guid from "./Guid";
 
 export class TEvent<T> {
     emitter = new EventEmitter();
