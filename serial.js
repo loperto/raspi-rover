@@ -14,7 +14,9 @@ module.exports = function Serial(osName) {
             message += data.toString();
             let endIndex = message.indexOf("}");
             if (endIndex !== -1) {
-                callback(message.substring(0, endIndex + 1));
+                const cutted = message.substring(0, endIndex + 1);
+                console.log(cutted);
+                callback(cutted);
                 if (message.length - 1 === endIndex)
                     message = "";
                 else
@@ -23,10 +25,10 @@ module.exports = function Serial(osName) {
         });
     }
 
-    this.write = function write(message, onError) {
-        this.serial.write(message, function (err) {
+    this.write = function write(data, onError) {
+        this.serial.write(data, function (err) {
             if (err) {
-                console.log('error on message', message);
+                console.log('error on message', data);
                 onError();
             }
             console.log('message sended');
