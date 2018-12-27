@@ -25,9 +25,9 @@ class Server {
         this.isAlive = true;
     }
 
-    new_client(socket) {
+    new_client(socket, req) {
         var that = this;
-        const clientIp = socket.connection.remoteAddress;
+        const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
 
         this.serial.onMessage((data) => {
