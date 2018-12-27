@@ -24,6 +24,7 @@ export default class WebPlayer {
     pktnum: number = 0;
     running: boolean;
     framesList: Uint8Array[];
+    refreshInterval: NodeJS.Timer;
     public Messages = new TEvent<ITelemetry>();
 
     constructor(canvas: HTMLCanvasElement, canvastype: string) {
@@ -34,6 +35,8 @@ export default class WebPlayer {
         // AVC codec initialization
         this.avc = new Avc();
     }
+
+
 
     decode = (data: any) => {
         // var naltype = "invalid frame";
@@ -79,7 +82,7 @@ export default class WebPlayer {
 
         this.running = true;
 
-        setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
+        this.refreshInterval = setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
         this.ws.onclose = () => {
             this.running = false;
             console.log("WSAvcPlayer: Connection closed")
@@ -127,6 +130,7 @@ export default class WebPlayer {
 
     disconnect = () => {
         this.ws.close();
+        clearInterval(this.refreshInterval);
     }
 
     send = (command: ICommand) => {

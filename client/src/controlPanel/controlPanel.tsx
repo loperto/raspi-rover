@@ -31,6 +31,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
 
     public componentWillUnMount() {
         this.player.Messages.unregister(this.messageListener);
+        this.player.disconnect();
     }
 
     private onCanvasReady = () => {
