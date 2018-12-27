@@ -13,17 +13,23 @@ class Server {
         };
         this.socketServer = new WebSocketServer({ server });
         this.streamer = new VideoStreamer(this.socketServer, this.options);
+        console.log("starting serial.");
+        this.serial = new Serial(os.type());
         this.new_client = this.new_client.bind(this);
         this.socketServer.on('connection', this.new_client);
     }
 
+    noop() { }
+
+    heartbeat() {
+        this.isAlive = true;
+    }
 
     new_client(socket) {
         var that = this;
-        console.log('New guy');
+        const clientIp = req.connection.remoteAddress;
+        console.log(`New client connected. Ip: ${clientIp}`);
 
-        console.log("starting serial.");
-        this.serial = new Serial(os.type());
         this.serial.onMessage((data) => {
             socket.send(data);
         });
@@ -50,7 +56,7 @@ class Server {
             }
         });
 
-        socket.on('close', function () {
+        socket.on("close", function () {
             that.streamer.stop_feed();
             console.log('stopping client interval');
         });
