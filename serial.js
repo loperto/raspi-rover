@@ -14,7 +14,7 @@ module.exports = function Serial(osName) {
     this.serial.on('open', () => console.log('serial port open'));
     this.serial.on('close', () => console.log('serial port closed'));
     this.onMessage = function onMessage(callback) {
-        this.serial.on('data', (data) => {
+        parser.on('data', (data) => {
             // message += data.toString();
             // let endIndex = message.indexOf("}");
             // if (endIndex !== -1) {
