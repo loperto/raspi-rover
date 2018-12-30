@@ -42,7 +42,10 @@ class VideoStreamer {
         console.log(cmd);
         this.streamer = spawn('raspivid', ['-t', '0', '-o', '-', '-w', this.options.width, '-h', this.options.height, '-fps', this.options.fps, '-pf', 'baseline']);
         this.streamer.on("exit", function (code) {
-            console.log("Failure", code);
+            if (code)
+                console.log(`Video streamer failure. Error code: ${code}`);
+            else
+                console.log("Video streamer stopped");
         });
 
         return this.streamer.stdout;
