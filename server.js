@@ -1,5 +1,6 @@
 "use strict";
-const WebSocketServer = require("ws").Server;
+const WebSocket = require("ws");
+const WebSocketServer = WebSocket.Server;
 const VideoStreamer = require("./video-streamer");
 const Serial = require("./serial");
 const os = require('os');
