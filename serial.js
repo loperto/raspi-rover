@@ -1,6 +1,5 @@
 var SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
 
 module.exports = function Serial(osName) {
     const port = osName === "Linux" ? "/dev/ttyACM0" : "COM4";
