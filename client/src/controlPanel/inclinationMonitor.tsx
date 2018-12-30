@@ -9,15 +9,16 @@ export interface Props {
 
 export default class InclinationMonitor extends React.PureComponent<Props>{
     render() {
+        const { pitch, roll } = this.props;
         return (
             <div>
                 <img
                     src={car}
-                    style={{ width: 48, transform: `rotate(${this.props.pitch.toFixed(0)}deg)` }}
+                    style={{ width: 48, transform: `rotate(${pitch && pitch.toFixed(0) || 0}deg)` }}
                 />
                 <img
                     src={carFront}
-                    style={{ width: 48, transform: `rotate(${this.props.roll.toFixed(0)}deg)` }}
+                    style={{ width: 48, transform: `rotate(${roll && roll.toFixed(0) || 0}deg)` }}
                 />
             </div>
         );

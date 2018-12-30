@@ -45,10 +45,11 @@ export default class WebPlayer {
 
         this.ws.onopen = (ws) => {
             console.log("Connected to " + url);
+            this.initCanvas(960, 540);
             this.send({ type: "start_camera", value: 0 });
         };
 
-        this.ws.onmessage = (evt: any) => {
+        this.ws.onmessage = (evt: MessageEvent) => {
             if (typeof evt.data == "string")
                 return this.cmd(JSON.parse(evt.data));
             this.pktnum++;
@@ -91,16 +92,9 @@ export default class WebPlayer {
         this.avc.onPictureDecoded = canvas.decode;
     }
 
-    cmd = (cmd: any) => {
+    cmd = (cmd: ITelemetry) => {
         console.log("Incoming request", cmd);
-        if (cmd.action == "init") {
-            this.initCanvas(cmd.width, cmd.height);
-            this.canvas.width = cmd.width;
-            this.canvas.height = cmd.height;
-        }
-        else {
-            this.Messages.emit(cmd);
-        }
+        this.Messages.emit(cmd);
     }
 
     disconnect = () => {
