@@ -19,8 +19,9 @@ module.exports = function Serial(osName) {
             // let endIndex = message.indexOf("}");
             // if (endIndex !== -1) {
             //     const cutted = message.substring(0, endIndex + 1);
-            console.log(data);
-            callback(data);
+            const readable = data.toString();
+            console.log(readable);
+            callback(readable);
             // if (message.length - 1 === endIndex)
             //     message = "";
             // else
