@@ -253,8 +253,6 @@ void loop()
 		{
 			const char *type = root["type"];
 			int value = root["value"];
-			Serial.println(type);
-			Serial.println(value);
 			execCommand(type, value);
 		}
 	}
