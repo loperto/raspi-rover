@@ -11,6 +11,7 @@ class VideoStreamer {
         this.streamer;
         this.ws = ws;
         this.options = options;
+        this.running = false;
         // this.new_client = this.new_client.bind(this);
         this.start_feed = this.start_feed.bind(this);
         this.stop_feed = this.stop_feed.bind(this);
@@ -19,14 +20,19 @@ class VideoStreamer {
     }
 
     start_feed() {
+        if (this.running) {
+            console.log("video stream already running!");
+        }
         this.readStream = this.get_feed();
         this.readStream = this.readStream.pipe(new Splitter(NALseparator));
         this.readStream.on("data", this.broadcast);
     }
 
     stop_feed() {
-        this.readStream.end();
-        this.streamer.kill();
+        if (this.running) {
+            this.readStream.end();
+            this.streamer.kill();
+        }
     }
 
     get_feed() {
