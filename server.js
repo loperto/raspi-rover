@@ -30,12 +30,6 @@ class Server {
                 socket.send(data);
         });
 
-        socket.send(JSON.stringify({
-            action: "init",
-            width: this.options.width,
-            height: this.options.height,
-        }));
-
         socket.on("message", function (command) {
             console.log('message:', command);
             let obj = JSON.parse(command);
