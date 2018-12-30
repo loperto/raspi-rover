@@ -9,6 +9,7 @@ module.exports = function Serial(osName) {
     });
 
     this.serial.on('open', () => console.log('serial port open'));
+    this.serial.on('close', () => console.log('serial port closed'));
     this.onMessage = function onMessage(callback) {
         this.serial.on('data', (data) => {
             message += data.toString();
@@ -23,6 +24,10 @@ module.exports = function Serial(osName) {
                     message = message.substr(endIndex + 1, message.length - 1);
             }
         });
+    }
+
+    this.close = function close() {
+        this.serial.close();
     }
 
     this.write = function write(data, onError) {

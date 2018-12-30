@@ -20,12 +20,6 @@ class Server {
         this.socketServer.on('connection', this.new_client);
     }
 
-    noop() { }
-
-    heartbeat() {
-        this.isAlive = true;
-    }
-
     new_client(socket, req) {
         var that = this;
         const clientIp = req.connection.remoteAddress;
