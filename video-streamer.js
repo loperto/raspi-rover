@@ -36,6 +36,7 @@ class VideoStreamer {
     }
 
     get_feed() {
+        this.running = true;
         var msk = "raspivid -t 0 -o - -w %d -h %d -fps %d";
         var cmd = util.format(msk, this.options.width, this.options.height, this.options.fps);
         console.log(cmd);
