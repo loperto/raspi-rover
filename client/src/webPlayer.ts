@@ -32,35 +32,10 @@ export default class WebPlayer {
         this.type = canvastype;
         this.running = false;
         this.framesList = [];
-        // AVC codec initialization
         this.avc = new Avc();
     }
 
-
-
-    decode = (data: any) => {
-        // var naltype = "invalid frame";
-        // if (data.length > 4) {
-        //     if (data[4] == 0x65) {
-        //         naltype = "I frame";
-        //     }
-        //     else if (data[4] == 0x41) {
-        //         naltype = "P frame";
-        //     }
-        //     else if (data[4] == 0x67) {
-        //         naltype = "SPS";
-        //     }
-        //     else if (data[4] == 0x68) {
-        //         naltype = "PPS";
-        //     }
-        // }
-        // console.log("Passed " + naltype + " to decoder");
-        this.avc.decode(data);
-    }
-
     connect = (url: string, onCanvasReady: () => void) => {
-
-        // Websocket initialization
         if (this.ws != undefined) {
             this.ws.close();
             delete this.ws;
@@ -68,8 +43,9 @@ export default class WebPlayer {
         this.ws = new WebSocket(url);
         this.ws.binaryType = "arraybuffer";
 
-        this.ws.onopen = () => {
+        this.ws.onopen = (ws) => {
             console.log("Connected to " + url);
+            this.send({ type: "start_camera", value: 0 });
         };
 
         this.ws.onmessage = (evt: any) => {
@@ -94,7 +70,6 @@ export default class WebPlayer {
         if (!this.running)
             return;
 
-
         if (this.framesList.length > 10) {
             console.log("Dropping frames", this.framesList.length);
             this.framesList = [];
@@ -102,7 +77,7 @@ export default class WebPlayer {
 
         var frame = this.framesList.shift();
         if (frame)
-            this.decode(frame);
+            this.avc.decode(frame);
 
         onCanvasReady();
     }
@@ -129,7 +104,9 @@ export default class WebPlayer {
     }
 
     disconnect = () => {
-        this.ws.close();
+        this.running = false;
+        this.send({ type: "stop_camera", value: 0 });
+        // this.ws.close();
         clearInterval(this.refreshInterval);
     }
 
