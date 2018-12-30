@@ -53,9 +53,9 @@ class Server {
         });
 
         socket.on("close", function () {
-            for (let client of that.socketServer.clients) {
-                console.log("client", client);
-            }
+            that.socketServer.clients.forEach(function each(ws) {
+                console.log("client", ws);
+            });
             that.streamer.stop_feed();
             console.log('stopping client interval');
         });
