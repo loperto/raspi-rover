@@ -31,7 +31,8 @@ class Server {
         console.log(`New client connected. Ip: ${clientIp}`);
 
         this.serial.onMessage((data) => {
-            socket.send(data);
+            if (socket.readyState === WebSocket.OPEN)
+                socket.send(data);
         });
 
         socket.send(JSON.stringify({
