@@ -53,6 +53,7 @@ class Server {
         });
 
         socket.on("close", function () {
+            console.log("count clients...");
             that.socketServer.clients.forEach(function each(ws) {
                 console.log("client", ws);
             });
