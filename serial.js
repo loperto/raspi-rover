@@ -20,7 +20,7 @@ class Serial {
     }
 
     onMessage(callback) {
-        parser.on('data', (data) => {
+        this.parser.on('data', (data) => {
             const readable = data.toString();
             // console.log(readable);
             callback(readable);
