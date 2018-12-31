@@ -13,6 +13,7 @@ class Server {
             fps: 12,
         };
         this.socketServer = new WebSocketServer({ server });
+        console.log("starting video streaming service.");
         this.streamer = new VideoStreamer(this.socketServer, this.options);
         console.log("starting serial.");
         this.serial = new Serial(os.type());
@@ -35,10 +36,10 @@ class Server {
             let obj = JSON.parse(command);
 
             if (obj.type == "start_camera") {
-                that.streamer.start_feed();
+                that.streamer.start_stream();
             }
             else if (obj.type == "stop_camera") {
-                that.streamer.stop_feed();
+                that.streamer.stop_stream();
             }
             else {
                 if (that.serial)
@@ -51,7 +52,7 @@ class Server {
             that.socketServer.clients.forEach(function each(ws) {
                 console.log("client", ws);
             });
-            that.streamer.stop_feed();
+            that.streamer.stop_stream();
             console.log('stopping client interval');
         });
     }
