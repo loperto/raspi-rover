@@ -1,9 +1,9 @@
 import * as React from "react";
 import "./controlPanel.css";
 import RangeInput from "../common/rangeInput/rangeInput";
-import DirectionPanel from "../directionPanel";
+import DirectionPanel from "./directionPanel";
 import InclinationMonitor from "./inclinationMonitor";
-import WebPlayer, { ITelemetry } from "../webPlayer";
+import RoverControl, { ITelemetry } from "../roverControl";
 
 interface IState {
     currentSpeed: number;
@@ -12,7 +12,7 @@ interface IState {
 
 export default class ControlPanel extends React.Component<{}, IState> {
 
-    private player: WebPlayer;
+    private rover: RoverControl;
     private canvas: HTMLCanvasElement;
     constructor(props: {}) {
         super(props);
@@ -24,14 +24,14 @@ export default class ControlPanel extends React.Component<{}, IState> {
 
     public componentDidMount() {
         const uri = `ws://pi:8080`;
-        this.player = new WebPlayer(this.canvas, "webgl");
-        this.player.connect(uri, this.onCanvasReady);
-        this.player.Messages.register(this.messageListener);
+        this.rover = new RoverControl(this.canvas, "webgl");
+        this.rover.connect(uri, this.onCanvasReady);
+        this.rover.Messages.register(this.messageListener);
     }
 
     public componentWillUnMount() {
-        this.player.Messages.unregister(this.messageListener);
-        this.player.disconnect();
+        this.rover.Messages.unregister(this.messageListener);
+        this.rover.disconnect();
     }
 
     private onCanvasReady = () => {
@@ -43,51 +43,51 @@ export default class ControlPanel extends React.Component<{}, IState> {
     }
 
     private led = () => {
-        this.player.send({ type: "led", value: 0 });
+        this.rover.send({ type: "led", value: 0 });
     }
 
     private beep = () => {
-        this.player.send({ type: "beep", value: 300 });
+        this.rover.send({ type: "beep", value: 300 });
     }
 
     private forward = () => {
-        this.player.send({ type: "forward", value: 0 });
+        this.rover.send({ type: "forward", value: 0 });
     }
 
     private backward = () => {
-        this.player.send({ type: "backward", value: 0 });
+        this.rover.send({ type: "backward", value: 0 });
     }
 
     private left = () => {
-        this.player.send({ type: "left", value: 0 });
+        this.rover.send({ type: "left", value: 0 });
     }
 
     private right = () => {
-        this.player.send({ type: "right", value: 0 });
+        this.rover.send({ type: "right", value: 0 });
     }
 
     private stop = () => {
-        this.player.send({ type: "stop", value: 0 });
+        this.rover.send({ type: "stop", value: 0 });
     }
 
     private startCamera = () => {
-        this.player.send({ type: "start_camera", value: 0 });
+        this.rover.send({ type: "start_camera", value: 0 });
     }
 
     private stopCamera = () => {
-        this.player.send({ type: "stop_camera", value: 0 });
+        this.rover.send({ type: "stop_camera", value: 0 });
     }
 
     private onChangeCameraX = (angle: number) => {
-        this.player.send({ type: "cameraX", value: angle });
+        this.rover.send({ type: "cameraX", value: angle });
     }
 
     private onChangeCameraY = (angle: number) => {
-        this.player.send({ type: "cameraY", value: angle });
+        this.rover.send({ type: "cameraY", value: angle });
     }
 
     private onChangeSpeed = (speed: number) => {
-        this.player.send({ type: "speed", value: speed });
+        this.rover.send({ type: "speed", value: speed });
         this.setState({ currentSpeed: speed });
     }
 

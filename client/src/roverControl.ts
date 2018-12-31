@@ -35,39 +35,7 @@ export default class WebPlayer {
         this.avc = new Avc();
     }
 
-    connect = (url: string, onCanvasReady: () => void) => {
-        if (this.ws != undefined) {
-            this.ws.close();
-            delete this.ws;
-        }
-        this.ws = new WebSocket(url);
-        this.ws.binaryType = "arraybuffer";
-
-        this.ws.onopen = (ws) => {
-            console.log("Connected to " + url);
-            this.initCanvas(960, 540);
-            this.send({ type: "start_camera", value: 0 });
-        };
-
-        this.ws.onmessage = (evt: MessageEvent) => {
-            if (typeof evt.data == "string")
-                return this.cmd(JSON.parse(evt.data));
-            this.pktnum++;
-            var frame = new Uint8Array(evt.data);
-            this.framesList.push(frame);
-        };
-
-        this.running = true;
-
-        this.refreshInterval = setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
-        this.ws.onclose = () => {
-            this.running = false;
-            console.log("WSAvcPlayer: Connection closed")
-        };
-
-    }
-
-    shiftFrame = (onCanvasReady: () => void) => {
+    private shiftFrame = (onCanvasReady: () => void) => {
         if (!this.running)
             return;
 
@@ -83,7 +51,7 @@ export default class WebPlayer {
         onCanvasReady();
     }
 
-    initCanvas = (width: number, height: number) => {
+    private initCanvas = (width: number, height: number) => {
         var canvasFactory = this.type == "webgl" || this.type == "YUVWebGLCanvas"
             ? YUVWebGLCanvas
             : YUVCanvas;
@@ -92,19 +60,50 @@ export default class WebPlayer {
         this.avc.onPictureDecoded = canvas.decode;
     }
 
-    cmd = (cmd: ITelemetry) => {
+    private emitTelemetry = (cmd: ITelemetry) => {
         console.log("Incoming request", cmd);
         this.Messages.emit(cmd);
     }
 
-    disconnect = () => {
+    public connect = (url: string, onCanvasReady: () => void) => {
+        if (this.ws != undefined) {
+            this.ws.close();
+            delete this.ws;
+        }
+        this.ws = new WebSocket(url);
+        this.ws.binaryType = "arraybuffer";
+
+        this.ws.onopen = (ws) => {
+            console.log("Connected to " + url);
+            this.initCanvas(960, 540);
+            this.send({ type: "start_camera", value: 0 });
+        };
+
+        this.ws.onmessage = (evt: MessageEvent) => {
+            if (typeof evt.data == "string")
+                return this.emitTelemetry(JSON.parse(evt.data));
+            this.pktnum++;
+            var frame = new Uint8Array(evt.data);
+            this.framesList.push(frame);
+        };
+
+        this.running = true;
+
+        this.refreshInterval = setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
+        this.ws.onclose = () => {
+            this.running = false;
+            console.log("WebSocket: Connection closed");
+        };
+
+    }
+
+    public disconnect = () => {
         this.running = false;
         this.send({ type: "stop_camera", value: 0 });
-        // this.ws.close();
         clearInterval(this.refreshInterval);
     }
 
-    send = (command: ICommand) => {
+    public send = (command: ICommand) => {
         this.ws.send(JSON.stringify(command));
     }
 }
