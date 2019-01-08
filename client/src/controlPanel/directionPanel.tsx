@@ -98,36 +98,44 @@ export default class DirectionPanel extends React.Component<IProps, State>{
 
     render() {
         return (
-            <div>
-                <button
-                    type="button"
-                    className={this.getButtonClass(DirectionButton.Up)}
-                    onMouseDown={this.props.onForward}
-                    onMouseUp={this.props.onStop}>
-                    <i className="fa fa-arrow-up" />
-                </button>
-                <button
-                    type="button"
-                    className={this.getButtonClass(DirectionButton.Down)}
-                    onMouseDown={this.props.onBackward}
-                    onMouseUp={this.props.onStop}>
-                    <i className="fa fa-arrow-down" />
-                </button>
-                <button
-                    type="button"
-                    className={this.getButtonClass(DirectionButton.Left)}
-                    onMouseDown={this.props.onLeft}
-                    onMouseUp={this.props.onStop}>
-                    <i className="fa fa-arrow-left" />
-                </button>
-                <button
-                    type="button"
-                    className={this.getButtonClass(DirectionButton.Right)}
-                    onMouseDown={this.props.onRight}
-                    onMouseUp={this.props.onStop}>
-                    <i className="fa fa-arrow-right" />
-                </button>
-            </div>
+            <>
+                <div>
+                    <button
+                        type="button"
+                        className={this.getButtonClass(DirectionButton.Up)}
+                        onMouseDown={this.props.onForward}
+                        onMouseUp={this.props.onStop}>
+                        <i className="fa fa-arrow-up" />
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className={this.getButtonClass(DirectionButton.Down)}
+                        onMouseDown={this.props.onBackward}
+                        onMouseUp={this.props.onStop}>
+                        <i className="fa fa-arrow-down" />
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className={this.getButtonClass(DirectionButton.Left)}
+                        onMouseDown={this.props.onLeft}
+                        onMouseUp={this.props.onStop}>
+                        <i className="fa fa-arrow-left" />
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className={this.getButtonClass(DirectionButton.Right)}
+                        onMouseDown={this.props.onRight}
+                        onMouseUp={this.props.onStop}>
+                        <i className="fa fa-arrow-right" />
+                    </button>
+                </div>
+            </>
         );
     }
 }
