@@ -96,7 +96,11 @@ export default class ControlPanel extends React.Component<{}, IState> {
     // }
 
     public onChangeDirection = (x: number, y: number) => {
+        console.log(x, y);
+    }
 
+    public onChangeCamera = (x: number, y: number) => {
+        console.log(x, y);
     }
 
     public render() {
@@ -156,10 +160,23 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         left: 0,
                         display: "flex",
                         flexDirection: "row",
-                        justifyContent: "center",
-                        width: "100%"
+                        width: "100%",
+                        justifyContent: "space-between"
                     }}>
-                        <Joystick size={100} onChange={this.onChangeDirection} />
+                        <Joystick
+                            xValues={{ min: 0, max: 100 }}
+                            yValues={{ min: 0, max: 100 }}
+                            initialX={50}
+                            initialY={50}
+                            onChange={this.onChangeDirection}
+                        />
+                        <Joystick
+                            xValues={{ min: 0, max: 100 }}
+                            yValues={{ min: 0, max: 100 }}
+                            initialX={50}
+                            initialY={0}
+                            onChange={this.onChangeDirection}
+                        />
                         {/* <div className="row">
                             <div className="col-xs-12 col-sm-6 col-md-4">
                                 <RangeInput
