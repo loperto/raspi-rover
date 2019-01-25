@@ -12,6 +12,7 @@ interface IState {
     marginLeft: number,
     marginTop: number,
     locked: boolean,
+    identifier: number | null;
 }
 
 export default class Joystick extends React.Component<IProps, IState> {
@@ -27,7 +28,8 @@ export default class Joystick extends React.Component<IProps, IState> {
         this.state = {
             marginLeft: initial.x,
             marginTop: initial.y,
-            locked: true
+            locked: true,
+            identifier: null,
         };
     }
 
@@ -47,39 +49,86 @@ export default class Joystick extends React.Component<IProps, IState> {
         this.joystickContainer.addEventListener("mousedown", this.onMouseDown);
         this.joystickContainer.addEventListener("mouseup", this.onMouseUp);
         this.joystickContainer.addEventListener("mousemove", this.onMouseMove);
+
+        this.joystickContainer.addEventListener("touchstart", this.onTouchStart);
+        this.joystickContainer.addEventListener("touchend", this.onTouchEnd);
+        this.joystickContainer.addEventListener("touchmove", this.onTouchMove);
     }
 
     public componentWillUnmount() {
         this.joystickContainer.removeEventListener("mousedown", this.onMouseDown);
-        this.joystickContainer.addEventListener("mouseup", this.onMouseUp);
-        this.joystickContainer.addEventListener("mousemove", this.onMouseMove);
+        this.joystickContainer.removeEventListener("mouseup", this.onMouseUp);
+        this.joystickContainer.removeEventListener("mousemove", this.onMouseMove);
+
+        this.joystickContainer.removeEventListener("touchstart", this.onTouchStart);
+        this.joystickContainer.removeEventListener("touchend", this.onTouchEnd);
+        this.joystickContainer.removeEventListener("touchmove", this.onTouchMove);
     }
 
-    private onMouseDown = (e: MouseEvent) => {
-        console.log("unlocked!");
-        this.setState({ locked: false });
+    private getLastTouchChanged(touchList: TouchList, identifier: number | null) {
+        if (identifier == null) return null;
+        let result: Touch | null = null;
+        for (let i = 0; i < touchList.length; i++) {
+            const touch = touchList[i];
+            if (touch.identifier !== identifier) continue;
+            result = touch;
+        }
+
+        return result;
     }
 
-    private onMouseUp = (e: MouseEvent) => {
-        console.log("locked!");
-        const deltaX = Math.abs(this.containerInitialPos.left - this.joystickInitialPos.left);
-        const deltaY = Math.abs(this.containerInitialPos.top - this.joystickInitialPos.top);
-        this.setState({ marginLeft: deltaX, marginTop: deltaY, locked: true });
-        this.props.onChange(deltaX, deltaY);
+    private onTraceStart(identifier: number) {
+        this.setState({ identifier, locked: false });
     }
 
-    private onMouseMove = (e: MouseEvent) => {
+    private onMove(x: number, y: number) {
         if (this.state.locked) return;
-        const deltaX = e.x - (this.containerInitialPos.left + this.joystickSize / 4);
-        const deltaY = e.y - (this.containerInitialPos.top + this.joystickSize / 4);
-        this.setState({ marginLeft: deltaX, marginTop: deltaY });
-
+        const deltaX = x - (this.containerInitialPos.left + this.joystickSize / 4);
+        const deltaY = y - (this.containerInitialPos.top + this.joystickSize / 4);
         const mappedX = this.map(deltaX, -25, 75, this.props.xValues.min, this.props.xValues.max);
         const mappedY = this.map(deltaY, 75, -25, this.props.yValues.min, this.props.yValues.max);
 
+        this.setState({ marginLeft: deltaX, marginTop: deltaY });
         this.props.onChange(mappedX, mappedY);
+    }
 
+    private onTraceEnd() {
+        const deltaX = Math.abs(this.containerInitialPos.left - this.joystickInitialPos.left);
+        const deltaY = Math.abs(this.containerInitialPos.top - this.joystickInitialPos.top);
+        this.setState({ identifier: null, marginLeft: deltaX, marginTop: deltaY, locked: true });
+        this.props.onChange(deltaX, deltaY);
+    }
 
+    private onMouseDown = (e: MouseEvent) => {
+        this.onTraceStart(0);
+    }
+
+    private onMouseMove = (e: MouseEvent) => {
+        console.log(e);
+        this.onMove(e.x, e.y);
+    }
+
+    private onMouseUp = (e: MouseEvent) => {
+        this.onTraceEnd();
+    }
+
+    private onTouchStart = (e: TouchEvent) => {
+        e.preventDefault();
+        this.onTraceStart(e.changedTouches[0].identifier);
+    }
+
+    private onTouchMove = (e: TouchEvent) => {
+        e.preventDefault();
+        if (this.state.locked) return;
+
+        var point = this.getLastTouchChanged(e.changedTouches, this.state.identifier);
+        if (point == null) return;
+        this.onMove(point.clientX, point.clientY);
+    }
+
+    private onTouchEnd = (e: TouchEvent) => {
+        e.preventDefault();
+        this.onTraceEnd();
     }
 
     public render() {
