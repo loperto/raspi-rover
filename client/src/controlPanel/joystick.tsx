@@ -16,14 +16,19 @@ interface IState {
 }
 
 export default class Joystick extends React.Component<IProps, IState> {
-    joystickSize: number = 100;
+    containerSize: number = 100;
+    joystickSize: number = 50;
     joystickContainer: HTMLDivElement;
     joystick: HTMLDivElement;
     containerInitialPos: DOMRect;
     joystickInitialPos: DOMRect;
+    offsets: {
+        minX: number, maxX: number, minY: number, maxY: number
+    };
 
     constructor(props: IProps) {
         super(props);
+        this.offsets = this.getJoystickOffsets(this.containerSize, this.joystickSize);
         const initial = this.getInitialPosition(props);
         this.state = {
             marginLeft: initial.x,
@@ -33,9 +38,21 @@ export default class Joystick extends React.Component<IProps, IState> {
         };
     }
 
+    private getJoystickOffsets(containerSize: number, joystickSize: number) {
+        const joyMargin = (containerSize - joystickSize) / 2;
+        const minScale = joyMargin - (joyMargin * 2);
+        const maxScale = joyMargin + (joyMargin * 2);
+        return {
+            minX: minScale,
+            maxX: maxScale,
+            minY: maxScale,
+            maxY: minScale
+        };
+    }
+
     private getInitialPosition(props: IProps) {
-        const initX = this.map(props.initialX, props.xValues.min, props.xValues.max, -25, 75);
-        const initY = this.map(props.initialY, props.yValues.min, props.yValues.max, 75, -25);
+        const initX = this.map(props.initialX, props.xValues.min, props.xValues.max, this.offsets.minX, this.offsets.maxX);
+        const initY = this.map(props.initialY, props.yValues.min, props.yValues.max, this.offsets.minY, this.offsets.maxY);
         return { x: initX, y: initY };
     }
 
@@ -46,6 +63,7 @@ export default class Joystick extends React.Component<IProps, IState> {
     public componentDidMount() {
         this.containerInitialPos = this.joystickContainer.getBoundingClientRect() as DOMRect;
         this.joystickInitialPos = this.joystick.getBoundingClientRect() as DOMRect;
+
         this.joystickContainer.addEventListener("mousedown", this.onMouseDown);
         this.joystickContainer.addEventListener("mouseup", this.onMouseUp);
         this.joystickContainer.addEventListener("mousemove", this.onMouseMove);
@@ -83,10 +101,10 @@ export default class Joystick extends React.Component<IProps, IState> {
 
     private onMove(x: number, y: number) {
         if (this.state.locked) return;
-        const deltaX = x - (this.containerInitialPos.left + this.joystickSize / 4);
-        const deltaY = y - (this.containerInitialPos.top + this.joystickSize / 4);
-        const mappedX = this.map(deltaX, -25, 75, this.props.xValues.min, this.props.xValues.max);
-        const mappedY = this.map(deltaY, 75, -25, this.props.yValues.min, this.props.yValues.max);
+        const deltaX = (x - this.containerInitialPos.left) - (this.joystickSize / 2);
+        const deltaY = (y - this.containerInitialPos.top) - (this.joystickSize / 2);
+        const mappedX = this.map(deltaX, this.offsets.minX, this.offsets.maxX, this.props.xValues.min, this.props.xValues.max);
+        const mappedY = this.map(deltaY, this.offsets.minY, this.offsets.maxY, this.props.yValues.min, this.props.yValues.max);
 
         this.setState({ marginLeft: deltaX, marginTop: deltaY });
         this.props.onChange(mappedX, mappedY);
@@ -104,7 +122,6 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     private onMouseMove = (e: MouseEvent) => {
-        console.log(e);
         this.onMove(e.x, e.y);
     }
 
@@ -132,18 +149,16 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const containerSize = this.joystickSize;
-        const joystickSize = this.joystickSize / 2;
         return (
             <div
                 ref={div => this.joystickContainer = div!}
-                style={{ backgroundColor: "blue", height: containerSize, width: containerSize, borderRadius: "50%", margin: 30 }}>
+                style={{ backgroundColor: "blue", height: this.containerSize, width: this.containerSize, borderRadius: "50%", margin: 30 }}>
                 <div
                     ref={div => this.joystick = div!}
                     style={{
                         backgroundColor: "red",
-                        height: joystickSize,
-                        width: joystickSize,
+                        height: this.joystickSize,
+                        width: this.joystickSize,
                         borderRadius: "50%",
                         marginTop: this.state.marginTop,
                         marginLeft: this.state.marginLeft,
