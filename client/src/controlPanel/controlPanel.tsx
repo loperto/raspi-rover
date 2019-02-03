@@ -173,6 +173,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             initialX={50}
                             initialY={0}
                             onChange={this.onChangeCamera}
+                            color="#ff3333"
+                            icon="fas fa-video"
                         />
                         {/* <div className="row">
                             <div className="col-xs-12 col-sm-6 col-md-4">

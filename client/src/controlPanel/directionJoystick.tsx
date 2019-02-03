@@ -52,6 +52,8 @@ export default class DirectionJoystick extends React.Component<IProps, IState>{
                 initialX={50}
                 initialY={50}
                 onChange={this.onChangeDirection}
+                color="#3333ff"
+                icon="fas fa-arrows-alt"
             />
         );
     }

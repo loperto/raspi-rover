@@ -6,6 +6,8 @@ interface IProps {
     xValues: { min: number, max: number }
     yValues: { min: number, max: number }
     onChange: (valueX: number, valueY: number) => void;
+    color?: string;
+    icon?: string
 }
 
 interface IState {
@@ -18,6 +20,7 @@ interface IState {
 export default class Joystick extends React.Component<IProps, IState> {
     containerSize: number = 100;
     joystickSize: number = 70;
+    borderWidht: number = 5;
     joystickContainer: HTMLDivElement;
     joystick: HTMLDivElement;
     containerInitialPos: DOMRect;
@@ -39,7 +42,7 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     private getJoystickOffsets(containerSize: number, joystickSize: number) {
-        const joyMargin = (containerSize - joystickSize) / 2;
+        const joyMargin = ((containerSize - joystickSize) / 2) - this.borderWidht;
         const minScale = joyMargin - (joyMargin * 2);
         const maxScale = joyMargin + (joyMargin * 2);
         return {
@@ -151,20 +154,33 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     public render() {
+        const color = this.props.color || "blue";
         return (
             <div
                 ref={div => this.joystickContainer = div!}
-                style={{ backgroundColor: "blue", height: this.containerSize, width: this.containerSize, borderRadius: "50%", margin: 30 }}>
+                style={{
+                    height: this.containerSize,
+                    width: this.containerSize,
+                    borderRadius: "50%",
+                    border: `${this.borderWidht}px solid ${color}`,
+                    margin: 30,
+                }}>
                 <div
                     ref={div => this.joystick = div!}
                     style={{
-                        backgroundColor: "red",
+                        backgroundColor: color,
                         height: this.joystickSize,
                         width: this.joystickSize,
                         borderRadius: "50%",
                         marginTop: this.state.marginTop,
                         marginLeft: this.state.marginLeft,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
                     }}>
+                    {this.props.icon
+                        ? <i className={`${this.props.icon} fa-lg`} style={{ color: "white" }} />
+                        : <span />}
                 </div>
             </div>
         );
