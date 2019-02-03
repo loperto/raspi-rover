@@ -20,27 +20,27 @@ export default class DirectionJoystick extends React.Component<IProps, IState>{
         if (x >= 100 && this.state.currentStatus != DirectionButton.Right) {
             this.setState({ currentStatus: DirectionButton.Right });
             console.log("onRight");
-            // this.props.onRight();
+            this.props.onRight();
         }
         else if (x <= 0 && this.state.currentStatus != DirectionButton.Left) {
             this.setState({ currentStatus: DirectionButton.Left });
             console.log("onLeft");
-            // this.props.onLeft();
+            this.props.onLeft();
         }
         else if (y >= 100 && this.state.currentStatus != DirectionButton.Up) {
             this.setState({ currentStatus: DirectionButton.Up });
             console.log("onForward");
-            // this.props.onForward();
+            this.props.onForward();
         }
         else if (y <= 0 && this.state.currentStatus != DirectionButton.Down) {
             this.setState({ currentStatus: DirectionButton.Down });
             console.log("onBackward");
-            // this.props.onBackward();
+            this.props.onBackward();
         }
         else if (this.state.currentStatus != null && x > 0 && x < 100 && y > 0 && y < 100) {
             this.setState({ currentStatus: null });
             console.log("onStop");
-            // this.props.onStop();
+            this.props.onStop();
         }
     }
 
