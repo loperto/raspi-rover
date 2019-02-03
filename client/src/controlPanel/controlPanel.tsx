@@ -166,11 +166,12 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             onLeft={this.left}
                             onRight={this.right}
                             onStop={this.stop}
+
                         />
                         <Joystick
-                            xValues={{ min: 0, max: 100 }}
+                            xValues={{ min: 0, max: 180 }}
                             yValues={{ min: 0, max: 100 }}
-                            initialX={50}
+                            initialX={90}
                             initialY={0}
                             onChange={this.onChangeCamera}
                             color="#ff3333"
