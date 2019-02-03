@@ -103,18 +103,20 @@ export default class Joystick extends React.Component<IProps, IState> {
         if (this.state.locked) return;
         const deltaX = (x - this.containerInitialPos.left) - (this.joystickSize / 2);
         const deltaY = (y - this.containerInitialPos.top) - (this.joystickSize / 2);
-        const mappedX = this.map(deltaX, this.offsets.minX, this.offsets.maxX, this.props.xValues.min, this.props.xValues.max);
-        const mappedY = this.map(deltaY, this.offsets.minY, this.offsets.maxY, this.props.yValues.min, this.props.yValues.max);
-
         this.setState({ marginLeft: deltaX, marginTop: deltaY });
-        this.props.onChange(mappedX, mappedY);
+        this.onChangeInternal(deltaX, deltaY);
     }
 
     private onTraceEnd() {
-        const deltaX = Math.abs(this.containerInitialPos.left - this.joystickInitialPos.left);
-        const deltaY = Math.abs(this.containerInitialPos.top - this.joystickInitialPos.top);
-        this.setState({ identifier: null, marginLeft: deltaX, marginTop: deltaY, locked: true });
-        this.props.onChange(deltaX, deltaY);
+        let initalPos = this.getInitialPosition(this.props);
+        this.setState({ identifier: null, marginLeft: initalPos.x, marginTop: initalPos.y, locked: true });
+        this.onChangeInternal(initalPos.x, initalPos.y);
+    }
+
+    private onChangeInternal(x: number, y: number) {
+        const mappedX = this.map(x, this.offsets.minX, this.offsets.maxX, this.props.xValues.min, this.props.xValues.max);
+        const mappedY = this.map(y, this.offsets.minY, this.offsets.maxY, this.props.yValues.min, this.props.yValues.max);
+        this.props.onChange(mappedX, mappedY);
     }
 
     private onMouseDown = (e: MouseEvent) => {
