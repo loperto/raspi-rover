@@ -5,6 +5,7 @@ import DirectionPanel from "./directionPanel";
 import InclinationMonitor from "./inclinationMonitor";
 import RoverControl, { ITelemetry } from "../roverControl";
 import Joystick from './joystick';
+import DirectionJoystick from './directionJoystick';
 
 interface IState {
     currentSpeed: number;
@@ -95,12 +96,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
     //     this.setState({ currentSpeed: speed });
     // }
 
-    public onChangeDirection = (x: number, y: number) => {
-        console.log(x, y);
-    }
-
     public onChangeCamera = (x: number, y: number) => {
-        console.log(x, y);
+        console.log("camera", "X:", x, "Y:", y);
     }
 
     public render() {
@@ -163,19 +160,19 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         width: "100%",
                         justifyContent: "space-between"
                     }}>
-                        <Joystick
-                            xValues={{ min: 0, max: 100 }}
-                            yValues={{ min: 0, max: 100 }}
-                            initialX={50}
-                            initialY={50}
-                            onChange={this.onChangeDirection}
+                        <DirectionJoystick
+                            onForward={this.forward}
+                            onBackward={this.backward}
+                            onLeft={this.left}
+                            onRight={this.right}
+                            onStop={this.stop}
                         />
                         <Joystick
                             xValues={{ min: 0, max: 100 }}
                             yValues={{ min: 0, max: 100 }}
                             initialX={50}
                             initialY={0}
-                            onChange={this.onChangeDirection}
+                            onChange={this.onChangeCamera}
                         />
                         {/* <div className="row">
                             <div className="col-xs-12 col-sm-6 col-md-4">

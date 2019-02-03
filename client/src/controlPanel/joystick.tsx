@@ -17,7 +17,7 @@ interface IState {
 
 export default class Joystick extends React.Component<IProps, IState> {
     containerSize: number = 100;
-    joystickSize: number = 50;
+    joystickSize: number = 70;
     joystickContainer: HTMLDivElement;
     joystick: HTMLDivElement;
     containerInitialPos: DOMRect;

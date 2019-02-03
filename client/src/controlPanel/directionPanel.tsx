@@ -8,7 +8,7 @@ export interface IProps {
     onRight: () => void;
 }
 
-enum DirectionButton {
+export enum DirectionButton {
     Up,
     Down,
     Left,
