@@ -24,6 +24,10 @@ export default class ControlPanel extends React.Component<{}, IState> {
         };
     }
 
+    isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    };
+
     resizeCanvas = () => {
         this.canvas.style.width = window.innerWidth + "px";
         setTimeout(() => {
