@@ -124,7 +124,7 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     private getMappedValue(value: number, offMin: number, offMax: number, min: number, max: number, stacked?: boolean) {
-        let mapped = this.map(value, this.offsets.minX, this.offsets.maxX, min, max);
+        let mapped = this.map(value, offMin, offMax, min, max);
         if (stacked) {
             if (mapped < min)
                 mapped = min;
