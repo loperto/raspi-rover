@@ -6,6 +6,7 @@ interface IProps {
     xValues: { min: number, max: number }
     yValues: { min: number, max: number }
     onChange: (valueX: number, valueY: number) => void;
+    stacked?: boolean;
     color?: string;
     icon?: string
 }
@@ -117,9 +118,20 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     private onChangeInternal(x: number, y: number) {
-        const mappedX = this.map(x, this.offsets.minX, this.offsets.maxX, this.props.xValues.min, this.props.xValues.max);
-        const mappedY = this.map(y, this.offsets.minY, this.offsets.maxY, this.props.yValues.min, this.props.yValues.max);
+        let mappedX = this.getMappedValue(x, this.offsets.minX, this.offsets.maxX, this.props.xValues.min, this.props.xValues.max, this.props.stacked);
+        let mappedY = this.getMappedValue(y, this.offsets.minY, this.offsets.maxY, this.props.yValues.min, this.props.yValues.max, this.props.stacked);
         this.props.onChange(mappedX, mappedY);
+    }
+
+    private getMappedValue(value: number, offMin: number, offMax: number, min: number, max: number, stacked?: boolean) {
+        let mapped = this.map(value, this.offsets.minX, this.offsets.maxX, min, max);
+        if (stacked) {
+            if (mapped < min)
+                mapped = min;
+            else if (mapped > max)
+                mapped = max;
+        }
+        return mapped;
     }
 
     private onMouseDown = (e: MouseEvent) => {
