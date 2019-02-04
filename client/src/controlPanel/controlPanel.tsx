@@ -1,4 +1,5 @@
 import * as React from "react";
+import { SFC } from 'react';
 import "./controlPanel.css";
 // import RangeInput from "../common/rangeInput/rangeInput";
 import DirectionPanel from "./directionPanel";
@@ -10,6 +11,20 @@ import DirectionJoystick from './directionJoystick';
 interface IState {
     currentSpeed: number;
     telemetry: ITelemetry | null;
+}
+
+export let TelemetryWidget: SFC<{ icon: string, value: string }> = ({ icon, value, children }) => {
+    const height: number = 30;
+    return (
+        <div className="text-center" style={{ margin: 5, color: "white" }}>
+            <div style={{ backgroundColor: "blue", padding: 5, width: 30, height: height, display: "inline-block" }}>
+                <i className={icon} />
+            </div>
+            <div style={{ backgroundColor: "black", padding: 5, height: height, minWidth: 40, display: "inline-block" }}>
+                <span style={{ fontSize: 12 }}>{value}</span>
+            </div>
+        </div >
+    );
 }
 
 export default class ControlPanel extends React.Component<{}, IState> {
@@ -87,14 +102,6 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.rover.send({ type: "stop", value: 0 });
     }
 
-    // private onChangeCameraX = (angle: number) => {
-    //     this.rover.send({ type: "cameraX", value: angle });
-    // }
-
-    // private onChangeCameraY = (angle: number) => {
-    //     this.rover.send({ type: "cameraY", value: angle });
-    // }
-
     // private onChangeSpeed = (speed: number) => {
     //     this.rover.send({ type: "speed", value: speed });
     //     this.setState({ currentSpeed: speed });
@@ -109,7 +116,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
         const roll = this.state.telemetry && (this.state.telemetry.roll * -1);
         return (
             <div>
-                <canvas ref={x => this.canvas = x!} />
+                <canvas ref={x => this.canvas = x!} style={{ backgroundColor: "#36474f" }} />
                 <div>
                     <div style={{
                         position: "absolute",
@@ -120,9 +127,9 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         top: 0,
                         left: 0
                     }}>
-                        <div><i className="fas fa-thermometer-half" /> {this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"}</div>
-                        <div><i className="fas fa-satellite-dish" /> {this.state.telemetry && this.state.telemetry.dist || "-"}</div>
-                        <div><i className="fas fa-tachometer-alt" /> {this.state.currentSpeed}</div>
+                        <TelemetryWidget icon="fas fa-thermometer-half" value={this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"} />
+                        <TelemetryWidget icon="fas fa-satellite-dish" value={this.state.telemetry && this.state.telemetry.dist.toString() || "-"} />
+                        <TelemetryWidget icon="fas fa-tachometer-alt" value={this.state.currentSpeed.toString()} />
                         <InclinationMonitor pitch={pitch || 0} roll={roll || 0} />
                     </div>
                     <div style={{
@@ -182,40 +189,19 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             icon="fas fa-video"
                             stacked
                         />
-                        {/* <div className="row">
-                            <div className="col-xs-12 col-sm-6 col-md-4">
-                                <RangeInput
-                                    label="camera X"
-                                    min={0}
-                                    max={180}
-                                    step={30}
-                                    initialValue={90}
-                                    onChange={this.onChangeCameraX}
-                                />
-                            </div>
-                            <div className="col-xs-12 col-sm-6 col-md-4">
-                                <RangeInput
-                                    label="camera Y"
-                                    min={0}
-                                    max={100}
-                                    step={15}
-                                    onChange={this.onChangeCameraY}
-                                />
-                            </div>
-                            <div className="col-xs-12 col-sm-6 col-md-4">
-                                <RangeInput
-                                    label="Speed"
-                                    initialValue={this.state.currentSpeed}
-                                    min={100}
-                                    max={250}
-                                    step={10}
-                                    onChange={this.onChangeSpeed}
-                                />
-                            </div>
-                        </div> */}
+                        {/*
+                            <RangeInput
+                                label="Speed"
+                                initialValue={this.state.currentSpeed}
+                                min={100}
+                                max={250}
+                                step={10}
+                                onChange={this.onChangeSpeed}
+                            />
+                            */}
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }
