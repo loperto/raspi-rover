@@ -38,7 +38,7 @@ class VideoStreamer {
         var msk = "raspivid -t 0 -o - -w %d -h %d -fps %d";
         var cmd = util.format(msk, this.options.width, this.options.height, this.options.fps);
         console.log("exe command: ", cmd);
-        this.streamer = spawn('raspivid', ['-t', '0', '-o', '-', '-w', this.options.width, '-h', this.options.height, '-fps', this.options.fps, '-pf', 'baseline']);
+        this.streamer = spawn('raspivid', ['-t', '0', '-o', '-n', '-w', this.options.width, '-h', this.options.height, '-fps', this.options.fps, '-pf', 'baseline']);
         this.streamer.on("exit", function (code) {
             if (code)
                 console.log(`Video streamer failure. Error code: ${code}`);
