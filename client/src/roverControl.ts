@@ -17,22 +17,21 @@ export interface ITelemetry {
 }
 
 export default class WebPlayer {
-    canvas: HTMLCanvasElement;
-    type: string;
-    ws: WebSocket;
-    avc: typeof Avc;
+    private canvas: HTMLCanvasElement;
+    private type: string;
+    private ws: WebSocket;
+    private avc: typeof Avc;
     pktnum: number = 0;
-    running: boolean;
-    framesList: Uint8Array[];
-    refreshInterval: NodeJS.Timer;
+    private running: boolean;
+    private framesList: Uint8Array[];
+    private refreshInterval: NodeJS.Timer;
     public Messages = new TEvent<ITelemetry>();
 
     constructor(canvas: HTMLCanvasElement, canvastype: string) {
         this.canvas = canvas;
         this.type = canvastype;
         this.running = false;
-        this.framesList = [];
-        this.avc = new Avc();
+        this.framesList = [];        
     }
 
     private shiftFrame = (onCanvasReady: () => void) => {
@@ -71,9 +70,11 @@ export default class WebPlayer {
             delete this.ws;
         }
         this.ws = new WebSocket(url);
+        this.avc = new Avc();
         this.ws.binaryType = "arraybuffer";
 
         this.ws.onopen = (ws) => {
+            this.running = true;
             console.log("Connected to " + url);
             this.initCanvas(960, 540);
             this.send({ type: "start_camera", value: 0 });
@@ -87,14 +88,11 @@ export default class WebPlayer {
             this.framesList.push(frame);
         };
 
-        this.running = true;
-
         this.refreshInterval = setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
         this.ws.onclose = () => {
             this.running = false;
             console.log("WebSocket: Connection closed");
         };
-
     }
 
     public disconnect = () => {
@@ -104,6 +102,7 @@ export default class WebPlayer {
     }
 
     public send = (command: ICommand) => {
-        this.ws.send(JSON.stringify(command));
+        if (this.running)
+            this.ws.send(JSON.stringify(command));
     }
 }
