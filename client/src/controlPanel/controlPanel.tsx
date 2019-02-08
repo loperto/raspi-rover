@@ -109,6 +109,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
 
     public onChangeCamera = (x: number, y: number) => {
         console.log("camera", "X:", x, "Y:", y);
+        this.rover.send({ type: "cameraX", value: x });
+        this.rover.send({ type: "cameraY", value: y })
     }
 
     public render() {
