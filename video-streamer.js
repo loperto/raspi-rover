@@ -3,7 +3,7 @@
 const spawn = require("child_process").spawn;
 const util = require("util");
 const Splitter = require("stream-split");
-const NALseparator = new Buffer([0, 0, 0, 1]);//NAL break
+const NALseparator = Buffer.from([0, 0, 0, 1]);//NAL break
 
 class VideoStreamer {
     constructor(ws, options) {
