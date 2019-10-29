@@ -1,3 +1,4 @@
+
 #include <MPU6050_tockn.h>
 #include <NewPing.h>
 #include <ArduinoJson.h>
@@ -23,7 +24,7 @@ const int ch2DirectionPin = 7;
 const int ch2PwmPin = 6;
 
 const int ledsPin = 13;
-const int buzzerPin = A0;
+const int buzzerPin = 2;
 
 #define TRIGGER_PIN 12
 #define ECHO_PIN 11
@@ -176,7 +177,7 @@ void beep(unsigned int duration)
 	noTone(buzzerPin);
 }
 
-void execCommand(const char *type, int value)
+void execCommand(const char* type, int value)
 {
 	if (strcmp(type, "forward") == 0)
 	{
@@ -228,13 +229,13 @@ void execCommand(const char *type, int value)
 void sendTelemetry()
 {
 	mpu6050.update();
-	StaticJsonBuffer<200> jsonBuffer;
-	JsonObject &root = jsonBuffer.createObject();
-	root["dist"] = sonar.ping_cm();
-	root["temp"] = mpu6050.getTemp();
-	root["pitch"] = mpu6050.getAccAngleX();
-	root["roll"] = mpu6050.getAccAngleY();
-	root.printTo(Serial);
+	const int capacity = JSON_OBJECT_SIZE(4);
+	StaticJsonDocument<capacity> doc;
+	doc["dist"] = sonar.ping_cm();
+	doc["temp"] = mpu6050.getTemp();
+	doc["pitch"] = mpu6050.getAccAngleX();
+	doc["roll"] = mpu6050.getAccAngleY();
+	serializeJson(doc, Serial);
 	Serial.println();
 }
 
@@ -242,17 +243,19 @@ void loop()
 {
 	if (Serial.available())
 	{
-		StaticJsonBuffer<200> jsonBuffer;
-		JsonObject &root = jsonBuffer.parse(Serial);
-		if (!root.success())
+		const int capacity = JSON_OBJECT_SIZE(2);
+		StaticJsonDocument<capacity> doc;
+		DeserializationError error = deserializeJson(doc, Serial);
+		if (error)
 		{
-			Serial.println("json parse failed");
+			Serial.print("json parse failed! error code: ");
+			Serial.println(error.c_str());
 			return;
 		}
 		else
 		{
-			const char *type = root["type"];
-			int value = root["value"];
+			const char* type = doc["type"];
+			int value = doc["value"];
 			execCommand(type, value);
 		}
 	}
