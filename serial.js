@@ -5,7 +5,8 @@ const Readline = require("@serialport/parser-readline");
 
 class Serial {
     constructor(osName) {
-        const port = osName === "Linux" ? "/dev/ttyACM0" : "COM4";
+        //pi3 : /dev/ttyACM0
+        const port = osName === "Linux" ? "/dev/ttyS0" : "COM4";
         this.serial = new SerialPort(port, {
             baudRate: 115200,
             autoOpen: true,
