@@ -243,8 +243,8 @@ void loop()
 {
 	if (Serial.available())
 	{
-		const int capacity = JSON_OBJECT_SIZE(2);
-		StaticJsonDocument<capacity> doc;
+		//const int capacity = JSON_OBJECT_SIZE(2);
+		StaticJsonDocument<200> doc;
 		DeserializationError error = deserializeJson(doc, Serial);
 		if (error)
 		{
