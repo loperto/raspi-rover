@@ -1,46 +1,52 @@
-"use strict";
-
-var SerialPort = require("serialport");
-const Readline = require("@serialport/parser-readline");
+const SerialPort = require('serialport')
+const Readline = require('@serialport/parser-readline');
+const Delimiter = require('@serialport/parser-delimiter')
 
 class Serial {
-    constructor(osName) {
-        //pi3 : /dev/ttyACM0
-        const port = osName === "Linux" ? "/dev/ttyS0" : "COM4";
-        this.serial = new SerialPort(port, {
-            baudRate: 115200,
+    constructor(path, onMessage, options) {
+        this.connected = false;
+        this.port = new SerialPort(path, {
+            baudRate: options && options.baudRate || 9600,
             autoOpen: true,
         });
-
-        this.parser = this.serial.pipe(new Readline({ delimiter: '\r\n' }));
-        this.serial.on('open', () => console.log('serial port open'));
-        this.serial.on('close', () => console.log('serial port closed'));
-        this.onMessage = this.onMessage.bind(this);
-        this.write = this.write.bind(this);
-        this.close = this.close.bind(this);
-    }
-
-    onMessage(callback) {
+        this.parser = this.port.pipe(new Delimiter({ delimiter: '\r\n' }));
         this.parser.on('data', (data) => {
-            const readable = data.toString();
-            // console.log(readable);
-            callback(readable);
-        });
-    }
-
-    write(data, onError) {
-        this.serial.write(data, (err) => {
-            if (err) {
-                console.log('error on message', data);
-                onError();
+            const message = data.toString();
+            if (message == "ready") {
+                this.connected = true;
+                if (options && options.onReady)
+                    options.onReady();
             }
-            console.log('message sended');
+            else {
+                onMessage(data);
+            }
+        });
+
+        this.port.on("error", (error) => {
+            console.log("SERIAL ERROR: ", error);
+            if (options && options.onError)
+                onError(error);
         });
     }
 
-    close() {
-        this.serial.close();
+    static async getAvailablePorts(deviceFilter) {
+        const ports = await SerialPort.list();
+        console.log(ports);
+        const filter = deviceFilter.toLowerCase();
+        return ports.find(x => JSON.stringify(x).toLowerCase().indexOf(filter) != -1);
     }
+
+    write(data) {
+        // if (this.connected)
+            this.port.write(data);
+        // else
+        //     console.log("Serial not connected.")
+    }
+
 }
 
 module.exports = Serial;
+
+
+
+

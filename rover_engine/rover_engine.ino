@@ -57,7 +57,7 @@ void setup()
 
 	//analogWrite(5, 100);
 	//analogWrite(6, 100);
-
+	Serial.println("ready");
 	//beep(500);
 }
 

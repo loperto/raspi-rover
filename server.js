@@ -12,47 +12,63 @@ class Server {
             height: 540,
             fps: 12,
         };
+        this.new_client = this.new_client.bind(this);
+        this.onSerialReady = this.onSerialReady.bind(this);
+        this.onSerialMessage = this.onSerialMessage.bind(this);
         this.socketServer = new WebSocketServer({ server });
         console.log("starting video streaming service.");
         this.streamer = new VideoStreamer(this.socketServer, this.options);
         console.log("starting serial.");
-        this.serial = new Serial(os.type());
-        this.new_client = this.new_client.bind(this);
+        this.serial = null;
+        Serial.getAvailablePorts("arduino").then(port => {
+            this.serial = new Serial(port.path, this.onSerialMessage, {
+                baudRate: 115200,
+                onSerialReady: this.onSerialReady,
+            });
+        })
+
         this.socketServer.on('connection', this.new_client);
     }
 
+    onSerialReady() {
+        console.log("Serial ready");
+    }
+
+    onSerialMessage(data) {
+        console.log(data.toString());
+        for (let client of this.socketServer.clients) {
+            client.
+            if (client.readyState === WebSocket.OPEN)
+                client.send(data);
+        }
+    }
+
     new_client(socket, req) {
-        var that = this;
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
 
-        this.serial.onMessage((data) => {
-            if (socket.readyState === WebSocket.OPEN)
-                socket.send(data);
-        });
-
-        socket.on("message", function (command) {
+        socket.on("message", (command) => {
             console.log('message:', command);
             let obj = JSON.parse(command);
 
             if (obj.type == "start_camera") {
-                that.streamer.start_stream();
+                // this.streamer.start_stream();
             }
             else if (obj.type == "stop_camera") {
-                that.streamer.stop_stream();
+                // this.streamer.stop_stream();
             }
             else {
-                if (that.serial)
-                    that.serial.write(command);
+                if (this.serial)
+                    this.serial.write(command);
             }
         });
 
-        socket.on("close", function () {
+        socket.on("close", () => {
             console.log("count clients...");
-            that.socketServer.clients.forEach(function each(ws) {
+            this.socketServer.clients.forEach(function each(ws) {
                 console.log("client", ws);
             });
-            that.streamer.stop_stream();
+            this.streamer.stop_stream();
             console.log('stopping client interval');
         });
     }
