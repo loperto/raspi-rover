@@ -21,7 +21,7 @@ class Server {
         console.log("starting serial.");
         this.serial = null;
         Serial.getAvailablePorts("arduino").then(port => {
-            this.serial = new Serial(port.path, this.onSerialMessage, {
+            this.serial = new Serial(port && port.path || "/dev/ttyS0", this.onSerialMessage, {
                 baudRate: 115200,
                 onSerialReady: this.onSerialReady,
             });
