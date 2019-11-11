@@ -9,13 +9,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
-    "serialport": "^7.1.1",
+    "serialport": "^8.0.5",
     "stream-split": "^1.1.0",
     "ws": "^6.1.2"
   },
   "devDependencies": {
-    "@types/express": "^4.17.1",
-    "@types/node": "^10.14.22",
+    "@types/express": "^4.17.2",
+    "@types/node": "^10.17.4",
     "@types/ws": "^6.0.3"
   }
 }
