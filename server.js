@@ -1,10 +1,12 @@
 "use strict";
 const WebSocket = require("ws");
-const WebSocketServer = WebSocket.Server;
 const VideoStreamer = require("./video-streamer");
 const Serial = require("./serial");
-const os = require('os');
+const os = require("os");
 
+function getDefaultSerialPort(osName) {
+    return osName === "Linux" ? "/dev/ttyS0" : "COM4";
+}
 class Server {
     constructor(server) {
         this.options = {
@@ -12,22 +14,23 @@ class Server {
             height: 540,
             fps: 12,
         };
-        this.new_client = this.new_client.bind(this);
+        this.new_client = this.onClientConnected.bind(this);
         this.onSerialReady = this.onSerialReady.bind(this);
         this.onSerialMessage = this.onSerialMessage.bind(this);
-        this.socketServer = new WebSocketServer({ server });
+        this.wss = new WebSocket.Server({ server });
         console.log("starting video streaming service.");
-        this.streamer = new VideoStreamer(this.socketServer, this.options);
+        this.streamer = new VideoStreamer(this.wss, this.options);
         console.log("starting serial.");
         this.serial = null;
         Serial.getAvailablePorts("arduino").then(port => {
-            this.serial = new Serial(port && port.path || "/dev/ttyS0", this.onSerialMessage, {
+            const path = port != null ? port.path : getDefaultSerialPort(os.osName);
+            this.serial = new Serial(path, this.onSerialMessage, {
                 baudRate: 115200,
                 onSerialReady: this.onSerialReady,
             });
         })
 
-        this.socketServer.on('connection', this.new_client);
+        this.wss.on("connection", this.onClientConnected);
     }
 
     onSerialReady() {
@@ -36,20 +39,19 @@ class Server {
 
     onSerialMessage(data) {
         console.log(data.toString());
-        for (let client of this.socketServer.clients) {
-            client.
+        for (let client of this.wss.clients) {
             if (client.readyState === WebSocket.OPEN)
-                client.send(data);
+                client.send(data.toString());
         }
     }
 
-    new_client(socket, req) {
+    onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
 
-        socket.on("message", (command) => {
-            console.log('message:', command);
-            let obj = JSON.parse(command);
+        client.on("message", (command) => {
+            console.log("message:", command);
+            const obj = JSON.parse(command);
 
             if (obj.type == "start_camera") {
                 // this.streamer.start_stream();
@@ -63,13 +65,9 @@ class Server {
             }
         });
 
-        socket.on("close", () => {
-            console.log("count clients...");
-            this.socketServer.clients.forEach(function each(ws) {
-                console.log("client", ws);
-            });
-            this.streamer.stop_stream();
-            console.log('stopping client interval');
+        client.on("close", () => {
+            // this.streamer.stop_stream();
+            console.log("stopping client interval");
         });
     }
 };
