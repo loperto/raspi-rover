@@ -177,52 +177,48 @@ void beep(unsigned int duration)
 	noTone(buzzerPin);
 }
 
-void execCommand(const char* type, int value)
+void execCommand(int type, int value)
 {
-	if (strcmp(type, "forward") == 0)
+	Serial.print("command ");
+	Serial.print(type);
+	Serial.print("value ");
+	Serial.println(value);
+	switch (type)
 	{
+	case 1:
 		forward();
-	}
-	else if (strcmp(type, "backward") == 0)
-	{
+		break;
+	case 2:
 		backward();
-	}
-	else if (strcmp(type, "left") == 0)
-	{
+		break;
+	case 3:
 		left();
-	}
-	else if (strcmp(type, "right") == 0)
-	{
+		break;
+	case 4:
 		right();
-	}
-	else if (strcmp(type, "stop") == 0)
-	{
+		break;
+	case 5:
 		engineStop();
-	}
-	if (strcmp(type, "speed") == 0)
-	{
+		break;
+	case 6:
 		changeSpeed(value);
-	}
-	else if (strcmp(type, "cameraX") == 0)
-	{
+		break;
+	case 7:
 		moveCameraX(value);
-	}
-	else if (strcmp(type, "cameraY") == 0)
-	{
+		break;
+	case 8:
 		moveCameraY(value);
-	}
-	else if (strcmp(type, "beep") == 0)
-	{
+		break;
+	case 9:
 		beep(value);
-	}
-	else if (strcmp(type, "led") == 0)
-	{
+		break;
+	case 10:
 		toggleLed();
-	}
-	else
-	{
+		break;
+	default:
 		Serial.print(type);
 		Serial.println(" command not found!");
+		break;
 	}
 }
 
@@ -243,21 +239,9 @@ void loop()
 {
 	if (Serial.available())
 	{
-		//const int capacity = JSON_OBJECT_SIZE(2);
-		StaticJsonDocument<200> doc;
-		DeserializationError error = deserializeJson(doc, Serial);
-		if (error)
-		{
-			Serial.print("json parse failed! error code: ");
-			Serial.println(error.c_str());
-			return;
-		}
-		else
-		{
-			const char* type = doc["type"];
-			int value = doc["value"];
-			execCommand(type, value);
-		}
+		uint8_t command[3];
+		Serial.readBytesUntil('!', command, 3);
+		execCommand(command[0], command[1]);
 	}
 	else
 	{

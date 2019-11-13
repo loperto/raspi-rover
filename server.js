@@ -17,6 +17,8 @@ class Server {
         this.new_client = this.onClientConnected.bind(this);
         this.onSerialReady = this.onSerialReady.bind(this);
         this.onSerialMessage = this.onSerialMessage.bind(this);
+        this.onClientConnected = this.onClientConnected.bind(this);
+        this.sendCommand = this.sendCommand.bind(this);
         this.wss = new WebSocket.Server({ server });
         console.log("starting video streaming service.");
         this.streamer = new VideoStreamer(this.wss, this.options);
@@ -31,6 +33,56 @@ class Server {
         })
 
         this.wss.on("connection", this.onClientConnected);
+    }
+
+
+    sendCommand(jsonCommand) {
+        console.log("message:", jsonCommand);
+
+        const command = JSON.parse(jsonCommand);
+        let commandId = null;
+        switch (command.type) {
+            case "start_camera":
+                //this.streamer.start_stream();
+                break;
+            case "stop_camera":
+                // this.streamer.stop_stream();
+                break;
+            case "forward":
+                commandId = 1;
+                break;
+            case "backward":
+                commandId = 2;
+                break;
+            case "left":
+                commandId = 3;
+                break;
+            case "right":
+                commandId = 4;
+                break;
+            case "stop":
+                commandId = 5;
+                break;
+            case "speed":
+                commandId = 6;
+                break;
+            case "cameraX":
+                commandId = 7;
+                break;
+            case "cameraY":
+                commandId = 8;
+                break;
+            case "beep":
+                commandId = 9;
+                break;
+            case "led":
+                commandId = 10;
+                break;
+        }
+        if (this.serial != null && commandId != null) {
+            const value = isNaN(command.value) ? 0 : command.value;
+            this.serial.write([commandId, value, '!']);
+        }
     }
 
     onSerialReady() {
@@ -50,19 +102,8 @@ class Server {
         console.log(`New client connected. Ip: ${clientIp}`);
 
         client.on("message", (command) => {
-            console.log("message:", command);
-            const obj = JSON.parse(command);
-
-            if (obj.type == "start_camera") {
-                // this.streamer.start_stream();
-            }
-            else if (obj.type == "stop_camera") {
-                // this.streamer.stop_stream();
-            }
-            else {
-                if (this.serial)
-                    this.serial.write(command);
-            }
+            console.log(command);
+            this.sendCommand(command);
         });
 
         client.on("close", () => {
