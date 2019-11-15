@@ -104,7 +104,6 @@ class Server {
         console.log(`New client connected. Ip: ${clientIp}`);
 
         client.on("message", (command) => {
-            console.log(command);
             this.sendCommand(command);
         });
 
