@@ -10,10 +10,10 @@ MPU6050 mpu6050(Wire);
 unsigned long lastTelemetrySend = 0;
 unsigned int telemetryFrequency = 500;
 
-Servo servoX;
-Servo servoY;
-int posX = 90;
-int posY = 1;
+Servo cameraServoX;
+Servo cameraServoY;
+int cameraAxisX = 90;
+int cameraAxisY = 1;
 
 unsigned int motorSpeed = 150;
 //CH1 right side
@@ -46,10 +46,10 @@ void setup()
 
 	pinMode(buzzerPin, OUTPUT);
 
-	servoX.attach(9);
-	servoY.attach(10);
-	servoX.write(posX);
-	servoY.write(posY);
+	cameraServoX.attach(9);
+	cameraServoY.attach(10);
+	cameraServoX.write(cameraAxisX);
+	cameraServoY.write(cameraAxisY);
 
 	Wire.begin();
 	mpu6050.begin();
@@ -61,50 +61,26 @@ void setup()
 	//beep(500);
 }
 
-void moveCameraX(int degrees)
+void moveCamera(Servo& cameraServo, int& currentValue, int degrees)
 {
-	if (degrees < 0 || degrees > 180 || degrees == posX)
+	if (degrees < 0 || degrees > 180 || degrees == currentValue)
 	{
 		return;
 	}
-	else if (posX < degrees)
+	else if (currentValue < degrees)
 	{
-		for (posX; posX <= degrees; posX += 1)
+		for (currentValue; currentValue <= degrees; currentValue += 1)
 		{
-			servoX.write(posX);
-			delay(20);
+			cameraServo.write(currentValue);
+			delay(5);
 		}
 	}
-	else if (posX > degrees)
+	else if (currentValue > degrees)
 	{
-		for (posX; posX >= degrees; posX -= 1)
+		for (currentValue; currentValue >= degrees; currentValue -= 1)
 		{
-			servoX.write(posX);
-			delay(20);
-		}
-	}
-}
-
-void moveCameraY(int degrees)
-{
-	if (degrees < 0 || degrees > 180 || degrees == posY)
-	{
-		return;
-	}
-	else if (posY < degrees)
-	{
-		for (posY; posY <= degrees; posY += 1)
-		{
-			servoY.write(posY);
-			delay(20);
-		}
-	}
-	else if (posY > degrees)
-	{
-		for (posY; posY >= degrees; posY -= 1)
-		{
-			servoY.write(posY);
-			delay(20);
+			cameraServo.write(currentValue);
+			delay(5);
 		}
 	}
 	return;
@@ -179,10 +155,6 @@ void beep(unsigned int duration)
 
 void execCommand(int type, int value)
 {
-	Serial.print("command ");
-	Serial.print(type);
-	Serial.print("value ");
-	Serial.println(value);
 	switch (type)
 	{
 	case 1:
@@ -204,10 +176,10 @@ void execCommand(int type, int value)
 		changeSpeed(value);
 		break;
 	case 7:
-		moveCameraX(value);
+		moveCamera(cameraServoX, cameraAxisX, value);
 		break;
 	case 8:
-		moveCameraY(value);
+		moveCamera(cameraServoY, cameraAxisY, value);
 		break;
 	case 9:
 		beep(value);
