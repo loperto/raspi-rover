@@ -45,10 +45,10 @@ class Server {
         let commandId = null;
         switch (command.type) {
             case "start_camera":
-                //this.streamer.start_stream();
+                this.streamer.start_stream();
                 break;
             case "stop_camera":
-                // this.streamer.stop_stream();
+                this.streamer.stop_stream();
                 break;
             case "forward":
                 commandId = 1;
@@ -108,7 +108,7 @@ class Server {
         });
 
         client.on("close", () => {
-            // this.streamer.stop_stream();
+            this.streamer.stop_stream();
             console.log("stopping client interval");
         });
     }
