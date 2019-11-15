@@ -5,7 +5,7 @@ const Serial = require("./serial");
 const os = require("os");
 
 function getDefaultSerialPort(osName) {
-    const port = osName === "Linux" ? "/dev/ttyS0" : "COM4";
+    const port = osName === "Linux" ? "/dev/ttyAMA0" : "COM4";
     console.log("Port auto discovery failed try default port:", port, "Operating system:", osName);
     return port;
 }
