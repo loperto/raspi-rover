@@ -65,7 +65,7 @@ void setup()
 	gunLeverServo.attach(gunLeverPin);
 	gunMotor1.write(MIN_SIGNAL);
 	gunMotor2.write(MIN_SIGNAL);
-	gunLeverServo.write(0);
+	gunLeverServo.write(180);
 
 
 	cameraServoX.attach(9);
@@ -210,6 +210,7 @@ void execCommand(int type, int value)
 		shot();
 		break;
 	case 12:
+   value = map(value, 0, 180, 180, 0);
 		moveServoProgressive(gunLeverServo, gunLeverAxisValue, value);
 		break;
 	default:
