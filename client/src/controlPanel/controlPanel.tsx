@@ -102,6 +102,10 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.rover.send({ type: "stop", value: 0 });
     }
 
+    private shot = () => {
+        this.rover.send({ type: "shot", value: 0 });
+    }
+
     // private onChangeSpeed = (speed: number) => {
     //     this.rover.send({ type: "speed", value: speed });
     //     this.setState({ currentSpeed: speed });
@@ -162,6 +166,13 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             className="btn btn-outline-primary btn-cmd"
                             onClick={this.beep}>
                             <i className="fas fa-volume-up" />
+                        </button>
+                        <button
+                            type="button"
+                            title="gun shot"
+                            className="btn btn-outline-danger btn-cmd"
+                            onClick={this.shot}>
+                            <i className="fas fa-bomb" />
                         </button>
                     </div>
                     <div style={{

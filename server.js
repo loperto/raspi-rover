@@ -80,6 +80,12 @@ class Server {
             case "led":
                 commandId = 10;
                 break;
+            case "shot":
+                commandId = 11;
+                break;
+            case "gunlever":
+                commandId = 12;
+                break;
         }
         if (this.serial != null && commandId != null) {
             const value = isNaN(command.value) ? 0 : command.value;
