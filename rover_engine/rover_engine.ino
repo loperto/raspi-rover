@@ -10,23 +10,23 @@ MPU6050 mpu6050(Wire);
 unsigned long lastTelemetrySend = 0;
 unsigned int telemetryFrequency = 500;
 
-const uint8_t cameraServoXPin = 9;
-const uint8_t cameraServoYPin = 10;
+const int cameraServoXPin = 9;
+const int cameraServoYPin = 10;
 Servo cameraServoX;
 Servo cameraServoY;
-unsigned int cameraAxisX = 90;
-unsigned int cameraAxisY = 1;
+int cameraAxisX = 90;
+int cameraAxisY = 1;
 
-uint8_t motorSpeed = 150;
+int motorSpeed = 150;
 //CH1 right side
-const uint8_t ch1DirectionPin = 41;
-const uint8_t ch1PwmPin = 44;
+const int ch1DirectionPin = 41;
+const int ch1PwmPin = 44;
 //CH2 left side
-const uint8_t ch2DirectionPin = 42;
-const uint8_t ch2PwmPin = 45;
+const int ch2DirectionPin = 42;
+const int ch2PwmPin = 45;
 
-const uint8_t ledsPin = 13;
-const uint8_t buzzerPin = 2;
+const int ledsPin = 13;
+const int buzzerPin = 2;
 
 #define TRIGGER_PIN 12
 #define ECHO_PIN 11
@@ -35,16 +35,16 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 #define MAX_SIGNAL 2000
 #define MIN_SIGNAL 1000
-const uint8_t gunLoaderPin = 4;
-const uint8_t gunLeverPin = 5;
-const uint8_t gunMotor1Pin = 6;
-const uint8_t gunMotor2Pin = 7;
+const int gunLoaderPin = 4;
+const int gunLeverPin = 5;
+const int gunMotor1Pin = 6;
+const int gunMotor2Pin = 7;
 
 Servo gunMotor1;
 Servo gunMotor2;
 Servo gunLoaderServo;
 Servo gunLeverServo;
-unsigned int gunLeverAxisValue = 0;
+int gunLeverAxisValue = 0;
 
 void setup()
 {
@@ -65,6 +65,8 @@ void setup()
   gunLeverServo.attach(gunLeverPin);
   gunMotor1.write(MIN_SIGNAL);
   gunMotor2.write(MIN_SIGNAL);
+  gunLeverServo.write(0);
+
 
   cameraServoX.attach(9);
   cameraServoY.attach(10);
@@ -78,7 +80,7 @@ void setup()
   Serial.println("ready");
 }
 
-void moveServoProgressive(Servo& servo, unsigned int& currentValue, int degrees)
+void moveServoProgressive(Servo& servo, int& currentValue, int degrees)
 {
   if (degrees < 0 || degrees > 180 || degrees == currentValue)
   {
