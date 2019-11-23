@@ -33,8 +33,8 @@ const int buzzerPin = 2;
 #define MAX_DISTANCE 100
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
-#define MAX_SIGNAL 2000
-#define MIN_SIGNAL 1000
+#define GUN_MAX_POWER 2000
+#define GUN_MIN_POWER 1000
 const int gunLoaderPin = 4;
 const int gunLeverPin = 5;
 const int gunMotor1Pin = 6;
@@ -45,6 +45,8 @@ Servo gunMotor2;
 Servo gunLoaderServo;
 Servo gunLeverServo;
 int gunLeverAxisValue = 0;
+#define GUN_LEVER_MAX 0
+#define GUN_LEVER_MIN 105
 
 void setup()
 {
@@ -59,13 +61,13 @@ void setup()
 
 	pinMode(buzzerPin, OUTPUT);
 
-	gunMotor1.attach(gunMotor1Pin, MIN_SIGNAL, MAX_SIGNAL);
-	gunMotor2.attach(gunMotor2Pin, MIN_SIGNAL, MAX_SIGNAL);
+	gunMotor1.attach(gunMotor1Pin, GUN_MIN_POWER, GUN_MAX_POWER);
+	gunMotor2.attach(gunMotor2Pin, GUN_MIN_POWER, GUN_MAX_POWER);
 	gunLoaderServo.attach(gunLoaderPin);
 	gunLeverServo.attach(gunLeverPin);
-	gunMotor1.write(MIN_SIGNAL);
-	gunMotor2.write(MIN_SIGNAL);
-	gunLeverServo.write(180);
+	gunMotor1.write(GUN_MIN_POWER);
+	gunMotor2.write(GUN_MIN_POWER);
+	gunLeverServo.write(GUN_LEVER_MIN);
 
 
 	cameraServoX.attach(9);
@@ -210,7 +212,7 @@ void execCommand(int type, int value)
 		shot();
 		break;
 	case 12:
-   value = map(value, 0, 180, 180, 0);
+		value = map(value, 0, 180, GUN_LEVER_MIN, GUN_LEVER_MAX);
 		moveServoProgressive(gunLeverServo, gunLeverAxisValue, value);
 		break;
 	default:
