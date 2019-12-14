@@ -20,14 +20,10 @@ int cameraAxisX = 90;
 int cameraAxisY = 1;
 
 
-int motorSpeed = 150;
-//CH1 right side
-const int ch1DirectionPin = 41;
-const int ch1PwmPin = 44;
-Dagu4Motor motorCh1(ch1PwmPin, ch1DirectionPin, A1, 0, 0);
-//CH2 left side
-const int ch2DirectionPin = 42;
-const int ch2PwmPin = 45;
+Dagu4Motor motorFL(8, 26, A1, 0, 0);
+Dagu4Motor motorFR(9, 27, A2, 0, 0);
+Dagu4Motor motorRR(10, 28, A3, 0, 0);
+Dagu4Motor motorRL(11, 29, A4, 0, 0);
 
 const int ledsPin = 25;
 const int buzzerPin = 2;
@@ -56,13 +52,6 @@ void setup()
 {
 	Serial.begin(115200);
 	pinMode(ledsPin, OUTPUT);
-
-	pinMode(ch1DirectionPin, OUTPUT);
-	pinMode(ch1PwmPin, OUTPUT);
-
-	pinMode(ch2DirectionPin, OUTPUT);
-	pinMode(ch2PwmPin, OUTPUT);
-
 	pinMode(buzzerPin, OUTPUT);
 
 	gunMotor1.attach(gunMotor1Pin, GUN_MIN_POWER, GUN_MAX_POWER);
@@ -82,7 +71,6 @@ void setup()
 	Wire.begin();
 	mpu6050.begin();
 	mpu6050.calcGyroOffsets(false);
-
 	Serial.println("ready");
 }
 
@@ -124,51 +112,61 @@ void toggleLed()
 	}
 }
 
-void ch1(int speed, bool forward)
-{
-	analogWrite(ch1PwmPin, speed);
-	digitalWrite(ch1DirectionPin, !forward);
-}
-
-void ch2(int speed, bool forward)
-{
-	analogWrite(ch2PwmPin, speed);
-	digitalWrite(ch2DirectionPin, forward);
-}
-
 void forward()
 {
-	ch1(motorSpeed, true);
-	ch2(motorSpeed, true);
+	motorFR.setMotorDirection(true);
+	motorFL.setMotorDirection(true);
+	motorRR.setMotorDirection(false);
+	motorRL.setMotorDirection(false);
+	setSpeed(100);
 }
 
 void backward()
 {
-	ch1(motorSpeed, false);
-	ch2(motorSpeed, false);
+	motorFR.setMotorDirection(false);
+	motorFL.setMotorDirection(false);
+	motorRR.setMotorDirection(true);
+	motorRL.setMotorDirection(true);
+	setSpeed(100);
+
 }
 
 void left()
 {
-	ch1(motorSpeed / 2, true);
-	ch2(motorSpeed / 2, false);
+	motorFL.setMotorDirection(0);
+	motorRL.setMotorDirection(0);
+
+	motorFR.setMotorDirection(1);
+	motorRR.setMotorDirection(1);
+	setSpeed(100);
+
 }
 
 void right()
 {
-	ch1(motorSpeed / 2, false);
-	ch2(motorSpeed / 2, true);
+	motorFL.setMotorDirection(1);
+	motorRL.setMotorDirection(1);
+
+	motorFR.setMotorDirection(0);
+	motorRR.setMotorDirection(0);
+	setSpeed(100);
+
 }
 
 void engineStop()
 {
-	ch1(0, true);
-	ch2(0, true);
+	motorFL.stopMotors();
+	motorRL.stopMotors();
+	motorFR.stopMotors();
+	motorRR.stopMotors();
 }
 
-void changeSpeed(int value)
+void setSpeed(int value)
 {
-	motorSpeed = value;
+	motorFL.setSpeed(value);
+	motorRL.setSpeed(value);
+	motorFR.setSpeed(value);
+	motorRR.setSpeed(value);
 }
 
 void beep(unsigned int duration)
@@ -198,7 +196,7 @@ void execCommand(int type, int value)
 		engineStop();
 		break;
 	case 6:
-		changeSpeed(value);
+		setSpeed(value);
 		break;
 	case 7:
 		moveServoProgressive(cameraServoX, cameraAxisX, value);
