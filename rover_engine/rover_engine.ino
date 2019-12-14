@@ -1,4 +1,6 @@
 
+#include <Encoder.h>
+#include <Dagu4Motor.h>
 #include <MPU6050_tockn.h>
 #include <NewPing.h>
 #include <ArduinoJson.h>
@@ -17,19 +19,21 @@ Servo cameraServoY;
 int cameraAxisX = 90;
 int cameraAxisY = 1;
 
+
 int motorSpeed = 150;
 //CH1 right side
 const int ch1DirectionPin = 41;
 const int ch1PwmPin = 44;
+Dagu4Motor motorCh1(ch1PwmPin, ch1DirectionPin, A1, 0, 0);
 //CH2 left side
 const int ch2DirectionPin = 42;
 const int ch2PwmPin = 45;
 
-const int ledsPin = 13;
+const int ledsPin = 25;
 const int buzzerPin = 2;
 
-#define TRIGGER_PIN 12
-#define ECHO_PIN 11
+#define TRIGGER_PIN 23
+#define ECHO_PIN 24
 #define MAX_DISTANCE 100
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
@@ -70,8 +74,8 @@ void setup()
 	gunLeverServo.write(GUN_LEVER_MIN);
 
 
-	cameraServoX.attach(9);
-	cameraServoY.attach(10);
+	cameraServoX.attach(2);
+	cameraServoY.attach(3);
 	cameraServoX.write(cameraAxisX);
 	cameraServoY.write(cameraAxisY);
 
