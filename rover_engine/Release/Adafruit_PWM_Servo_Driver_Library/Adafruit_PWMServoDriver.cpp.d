@@ -1,5 +1,6 @@
-C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\micro\Release\Servo\avr\Servo.cpp.o: \
- C:\Program\ Files\ (x86)\Arduino\libraries\Servo\src\avr\Servo.cpp \
+C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\micro\Release\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp.o: \
+ C:\Users\kigio\Documents\Arduino\libraries\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.cpp \
+ C:\Users\kigio\Documents\Arduino\libraries\Adafruit_PWM_Servo_Driver_Library\Adafruit_PWMServoDriver.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \
@@ -14,5 +15,5 @@ C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\micro\Release\Servo\avr\
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/USBCore.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\variants\micro/pins_arduino.h \
  c:\program\ files\ (x86)\arduino\hardware\arduino\avr\variants\leonardo\pins_arduino.h \
- C:\Program\ Files\ (x86)\Arduino\libraries\Servo\src/Servo.h \
- C:\Program\ Files\ (x86)\Arduino\libraries\Servo\src/avr/ServoTimers.h
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src/Wire.h \
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Stream.h

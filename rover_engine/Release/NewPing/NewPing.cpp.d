@@ -1,4 +1,4 @@
-C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\mega_atmega2560\Release\NewPing\NewPing.cpp.o: \
+C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\micro\Release\NewPing\NewPing.cpp.o: \
  C:\Users\kigio\Documents\Arduino\libraries\NewPing\src\NewPing.cpp \
  C:\Users\kigio\Documents\Arduino\libraries\NewPing\src\NewPing.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
@@ -11,4 +11,7 @@ C:\Users\kigio\AppData\Local\Temp\VMBuilds\rover_engine\mega_atmega2560\Release\
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Printable.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/USBAPI.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
- C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\variants\mega/pins_arduino.h
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/USBDesc.h \
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/USBCore.h \
+ C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\variants\micro/pins_arduino.h \
+ c:\program\ files\ (x86)\arduino\hardware\arduino\avr\variants\leonardo\pins_arduino.h
