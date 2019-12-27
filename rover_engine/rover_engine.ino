@@ -34,15 +34,26 @@ const uint8_t gunMotorChannel = 4;
 const uint8_t gunMotor2Channel = 5;
 const int gunLoaderServoChannel = 6;
 const int gunLeverServoChannel = 7;
-
 int gunLeverAxisValue = 0;
 #define GUN_LEVER_MAX 90
 #define GUN_LEVER_MIN 180
+
+const uint8_t motorPwmPin = 11;
+const uint8_t motorL_1 = A3;
+const uint8_t motorL_2 = A4;
+const uint8_t motorR_1 = 7;
+const uint8_t motorR_2 = 8;
+int motorSpeed = 80;
 
 void setup()
 {
 	pinMode(ledsPin, OUTPUT);
 	pinMode(buzzerPin, OUTPUT);
+	pinMode(motorPwmPin, OUTPUT);
+	pinMode(motorL_1, OUTPUT);
+	pinMode(motorL_2, OUTPUT);
+	pinMode(motorR_1, OUTPUT);
+	pinMode(motorR_2, OUTPUT);
 
 	Wire.begin(0x68);
 	mpu6050.begin();
@@ -107,61 +118,51 @@ void toggleLed()
 	}
 }
 
-void forward()
-{
-	//motorFR.setMotorDirection(true);
-	//motorFL.setMotorDirection(true);
-	//motorRR.setMotorDirection(false);
-	//motorRL.setMotorDirection(false);
-	//setSpeed(100);
+void motor(const uint8_t& motorPin1, const uint8_t& motorPin2, const uint8_t& dir) {
+	analogWrite(motorPwmPin, motorSpeed);
+	if (dir == 1) {
+		digitalWrite(motorPin1, HIGH);
+		digitalWrite(motorPin2, LOW);
+	}
+	else if (dir == 2) {
+		digitalWrite(motorPin1, LOW);
+		digitalWrite(motorPin2, HIGH);
+	}
+	else {
+		digitalWrite(motorPin1, LOW);
+		digitalWrite(motorPin2, LOW);
+	}
 }
 
-void backward()
-{
-	//motorFR.setMotorDirection(false);
-	//motorFL.setMotorDirection(false);
-	//motorRR.setMotorDirection(true);
-	//motorRL.setMotorDirection(true);
-	//setSpeed(100);
-
+void forward() {
+	motor(motorL_1, motorL_2, 1);
+	motor(motorR_1, motorR_2, 1);
 }
 
-void left()
-{
-	//motorFL.setMotorDirection(0);
-	//motorRL.setMotorDirection(0);
-
-	//motorFR.setMotorDirection(1);
-	//motorRR.setMotorDirection(1);
-	//setSpeed(100);
-
+void backward() {
+	motor(motorL_1, motorL_2, 2);
+	motor(motorR_1, motorR_2, 2);
 }
 
-void right()
-{
-	//motorFL.setMotorDirection(1);
-	//motorRL.setMotorDirection(1);
-
-	//motorFR.setMotorDirection(0);
-	//motorRR.setMotorDirection(0);
-	//setSpeed(100);
-
+void left() {
+	motor(motorL_1, motorL_2, 2);
+	motor(motorR_1, motorR_2, 1);
 }
 
-void engineStop()
-{
-	//motorFL.stopMotors();
-	//motorRL.stopMotors();
-	//motorFR.stopMotors();
-	//motorRR.stopMotors();
+void right() {
+	motor(motorL_1, motorL_2, 1);
+	motor(motorR_1, motorR_2, 2);
 }
+
+void stop() {
+	motor(motorL_1, motorL_2, 0);
+	motor(motorR_1, motorR_2, 0);
+}
+
 
 void setSpeed(int value)
 {
-	//motorFL.setSpeed(value);
-	//motorRL.setSpeed(value);
-	//motorFR.setSpeed(value);
-	//motorRR.setSpeed(value);
+	motorSpeed = value;
 }
 
 void beep(unsigned int duration)
@@ -188,7 +189,7 @@ void execCommand(int type, int value)
 		right();
 		break;
 	case 5:
-		engineStop();
+		stop();
 		break;
 	case 6:
 		setSpeed(value);
