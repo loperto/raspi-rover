@@ -39,7 +39,7 @@ class Server {
 
     onSerialReady() {
         console.log("serial opened");
-        this.sendCommand("{\"command\":\"ready\",\"value\":0}");
+        this.sendCommand("{\"type\":\"ready\",\"value\":0}");
     }
 
 
