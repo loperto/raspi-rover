@@ -34,15 +34,15 @@ class Server {
                 onReady: this.onSerialReady,
             });
         });
-        setTimeout(() => {
-            console.log("PING");
-            this.sendCommand("{\"type\":\"ping\",\"value\":0}")
-        }, 9000);
+
         this.wss.on("connection", this.onClientConnected);
     }
 
     onSerialReady() {
         console.log("serial opened");
+        const pingCommand = "{\"type\":\"ping\",\"value\":0}";
+        this.sendCommand(pingCommand);
+        setInterval(() => this.sendCommand(pingCommand), 9000);
     }
 
     sendCommand(jsonCommand) {
