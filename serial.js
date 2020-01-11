@@ -20,8 +20,9 @@ class Serial {
         });
 
         this.port.on("open", () => {
-            if (options && options.onReady)
-                options.onReady();
+            if (options && options.onReady) {
+                setTimeout(options.onReady(), 4000);
+            }
         })
     }
 
