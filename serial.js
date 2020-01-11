@@ -21,7 +21,7 @@ class Serial {
 
         this.port.on("open", () => {
             if (options && options.onReady) {
-                setTimeout(options.onReady(), 4000);
+                setTimeout(() => options.onReady(), 4000);
             }
         })
     }

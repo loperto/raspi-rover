@@ -75,8 +75,9 @@ void setup()
 	servoWrite(cameraServoYChannel, cameraAxisY);
 
 	Serial1.begin(115200);
+	digitalWrite(readyPin, HIGH);
+	delay(2000);
 	digitalWrite(readyPin, LOW);
-	Serial1.println("arduino_ready");
 }
 
 void servoWrite(uint8_t channel, uint8_t degrees) {
