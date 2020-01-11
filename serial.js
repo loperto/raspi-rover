@@ -18,6 +18,12 @@ class Serial {
             if (options && options.onError)
                 onError(error);
         });
+
+        this.port.on("open", () => {
+            console.log("serial opened");
+            if (options && options.onReady)
+                onReady();
+        })
     }
 
     static async getAvailablePorts(deviceFilter) {

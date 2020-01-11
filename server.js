@@ -20,6 +20,7 @@ class Server {
         this.onSerialMessage = this.onSerialMessage.bind(this);
         this.onClientConnected = this.onClientConnected.bind(this);
         this.sendCommand = this.sendCommand.bind(this);
+        this.onSerialReady = this.onSerialReady.bind(this);
         this.wss = new WebSocket.Server({ server });
         console.log("starting video streaming service.");
         this.streamer = new VideoStreamer(this.wss, this.options);
@@ -29,10 +30,14 @@ class Server {
             const path = port != null ? port.path : getDefaultSerialPort(os.type());
             this.serial = new Serial(path, this.onSerialMessage, {
                 baudRate: 115200,
+                onReady: this.onSerialReady,
             });
-        })
+        });
 
         this.wss.on("connection", this.onClientConnected);
+    }
+
+    onSerialReady() {
         this.sendCommand("{\"command\":\"ready\",\"value\":0}");
     }
 
@@ -105,7 +110,7 @@ class Server {
     onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
-        
+
 
         client.on("message", (command) => {
             this.sendCommand(command);
