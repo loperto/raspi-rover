@@ -4,6 +4,8 @@ const VideoStreamer = require("./video-streamer");
 const Serial = require("./serial");
 const os = require("os");
 
+process.on("exit", () => console.log("console exiting"));
+
 function getDefaultSerialPort(osName) {
     const port = osName === "Linux" ? "/dev/ttyAMA0" : "COM4";
     console.log("Port auto discovery failed try default port:", port, "Operating system:", osName);
