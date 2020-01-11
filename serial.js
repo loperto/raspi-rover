@@ -16,13 +16,12 @@ class Serial {
         this.port.on("error", (error) => {
             console.log("SERIAL ERROR: ", error);
             if (options && options.onError)
-                onError(error);
+                options.onError(error);
         });
 
         this.port.on("open", () => {
-            console.log("serial opened");
             if (options && options.onReady)
-                onReady();
+                options.onReady();
         })
     }
 
