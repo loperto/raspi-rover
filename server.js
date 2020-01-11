@@ -17,7 +17,6 @@ class Server {
             fps: 12,
         };
         this.new_client = this.onClientConnected.bind(this);
-        this.onSerialReady = this.onSerialReady.bind(this);
         this.onSerialMessage = this.onSerialMessage.bind(this);
         this.onClientConnected = this.onClientConnected.bind(this);
         this.sendCommand = this.sendCommand.bind(this);
@@ -34,6 +33,7 @@ class Server {
         })
 
         this.wss.on("connection", this.onClientConnected);
+        this.sendCommand("{\"command\":\"ready\",\"value\":0}");
     }
 
 
@@ -105,7 +105,7 @@ class Server {
     onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
-        this.sendCommand("{\"command\":\"ready\",\"value\":0}");
+        
 
         client.on("message", (command) => {
             this.sendCommand(command);
