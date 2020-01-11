@@ -10,6 +10,7 @@ function getDefaultSerialPort(osName) {
     return port;
 }
 class Server {
+
     constructor(server) {
         this.options = {
             width: 960,
@@ -33,7 +34,10 @@ class Server {
                 onReady: this.onSerialReady,
             });
         });
-        this.pingTimer = setTimeout(() => this.sendCommand("{\"type\":\"ping\",\"value\":0}"), 9000);
+        setTimeout(() => {
+            console.log("PING");
+            this.sendCommand("{\"type\":\"ping\",\"value\":0}")
+        }, 9000);
         this.wss.on("connection", this.onClientConnected);
     }
 
