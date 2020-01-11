@@ -9,6 +9,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 unsigned long lastTelemetrySend = 0;
 unsigned int telemetryFrequency = 500;
 
+unsigned long lastPingReceived = 0;
+unsigned int pingTimeout = 10000;
+
 #define SERVOMIN  120 
 #define SERVOMAX  600 
 
@@ -219,6 +222,7 @@ void execCommand(int type, int value)
 		moveServoProgressive(gunLeverServoChannel, gunLeverAxisValue, value);
 		break;
 	case 99:
+		lastPingReceived = millis();
 		digitalWrite(readyPin, HIGH);
 		break;
 	default:
@@ -267,6 +271,9 @@ void loop()
 		{
 			sendTelemetry();
 			lastTelemetrySend = millis();
+		}
+		if ((millis() - lastPingReceived) > pingTimeout) {
+			digitalWrite(readyPin, LOW);
 		}
 	}
 }

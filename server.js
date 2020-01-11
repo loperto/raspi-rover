@@ -4,8 +4,6 @@ const VideoStreamer = require("./video-streamer");
 const Serial = require("./serial");
 const os = require("os");
 
-process.on("exit", () => console.log("console exiting"));
-
 function getDefaultSerialPort(osName) {
     const port = osName === "Linux" ? "/dev/ttyAMA0" : "COM4";
     console.log("Port auto discovery failed try default port:", port, "Operating system:", osName);
@@ -35,15 +33,13 @@ class Server {
                 onReady: this.onSerialReady,
             });
         });
-
+        this.pingTimer = setTimeout(() => this.sendCommand("{\"type\":\"ping\",\"value\":0}"), 9000);
         this.wss.on("connection", this.onClientConnected);
     }
 
     onSerialReady() {
         console.log("serial opened");
-        this.sendCommand("{\"type\":\"ready\",\"value\":0}");
     }
-
 
     sendCommand(jsonCommand) {
         console.log("message:", jsonCommand);
@@ -92,7 +88,7 @@ class Server {
             case "gunlever":
                 commandId = 12;
                 break;
-            case "ready":
+            case "ping":
                 commandId = 99;
                 break;
         }
