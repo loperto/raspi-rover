@@ -30,7 +30,6 @@ class Server {
             const path = port != null ? port.path : getDefaultSerialPort(os.type());
             this.serial = new Serial(path, this.onSerialMessage, {
                 baudRate: 115200,
-                onSerialReady: this.onSerialReady,
             });
         })
 
@@ -40,7 +39,6 @@ class Server {
 
     sendCommand(jsonCommand) {
         console.log("message:", jsonCommand);
-
         const command = JSON.parse(jsonCommand);
         let commandId = null;
         switch (command.type) {
@@ -86,15 +84,14 @@ class Server {
             case "gunlever":
                 commandId = 12;
                 break;
+            case "ready":
+                commandId = 99;
+                break;
         }
         if (this.serial != null && commandId != null) {
             const value = isNaN(command.value) ? 0 : command.value;
             this.serial.write([commandId, value, '!']);
         }
-    }
-
-    onSerialReady() {
-        console.log("Serial ready");
     }
 
     onSerialMessage(data) {
@@ -108,6 +105,7 @@ class Server {
     onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
+        this.sendCommand("{\"command\":\"ready\",\"value\":0}");
 
         client.on("message", (command) => {
             this.sendCommand(command);

@@ -1,8 +1,6 @@
 const SerialPort = require("serialport")
 const Readline = require("@serialport/parser-readline");
 const Delimiter = require("@serialport/parser-delimiter")
-
-
 class Serial {
     constructor(path, onMessage, options) {
         this.connected = false;
@@ -12,15 +10,7 @@ class Serial {
         });
         this.parser = this.port.pipe(new Delimiter({ delimiter: "\r\n" }));
         this.parser.on("data", (data) => {
-            const message = data.toString();
-            if (message == "ready") {
-                this.connected = true;
-                if (options && options.onReady)
-                    options.onReady();
-            }
-            else {
-                onMessage(data);
-            }
+            onMessage(data);
         });
 
         this.port.on("error", (error) => {
@@ -38,10 +28,7 @@ class Serial {
     }
 
     write(data) {
-        // if (this.connected)
         this.port.write(data);
-        // else
-        //     console.log("Serial not connected.")
     }
 
 }

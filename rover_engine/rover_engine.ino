@@ -11,8 +11,7 @@ unsigned int telemetryFrequency = 500;
 
 #define SERVOMIN  120 
 #define SERVOMAX  600 
-#define GUN_MAX_POWER 2000
-#define GUN_MIN_POWER 1000
+
 
 const int ledsPin = A0;
 MPU6050 mpu6050(Wire);
@@ -22,7 +21,8 @@ const uint8_t cameraServoYChannel = 15;
 int cameraAxisX = 90;
 int cameraAxisY = 1;
 
-const int buzzerPin = 2;
+const int buzzerPin = 12;
+const int readyPin = 4;
 
 const uint8_t triggerPin = A1;
 const uint8_t echoPin = A2;
@@ -37,6 +37,8 @@ const int gunLeverServoChannel = 7;
 int gunLeverAxisValue = 0;
 #define GUN_LEVER_MAX 90
 #define GUN_LEVER_MIN 180
+#define GUN_MAX_POWER 2000
+#define GUN_MIN_POWER 1000
 
 const uint8_t motorPwmPin = 11;
 const uint8_t motorL_1 = A3;
@@ -54,6 +56,7 @@ void setup()
 	pinMode(motorL_2, OUTPUT);
 	pinMode(motorR_1, OUTPUT);
 	pinMode(motorR_2, OUTPUT);
+	pinMode(readyPin, OUTPUT);
 
 	Wire.begin(0x68);
 	mpu6050.begin();
@@ -72,7 +75,8 @@ void setup()
 	servoWrite(cameraServoYChannel, cameraAxisY);
 
 	Serial1.begin(115200);
-	Serial1.println("ready");
+	digitalWrite(readyPin, LOW);
+	Serial1.println("arduino_ready");
 }
 
 void servoWrite(uint8_t channel, uint8_t degrees) {
@@ -212,6 +216,9 @@ void execCommand(int type, int value)
 	case 12:
 		value = map(value, 0, 180, GUN_LEVER_MIN, GUN_LEVER_MAX);
 		moveServoProgressive(gunLeverServoChannel, gunLeverAxisValue, value);
+		break;
+	case 99:
+		digitalWrite(readyPin, HIGH);
 		break;
 	default:
 		Serial1.print(type);
