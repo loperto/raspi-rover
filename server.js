@@ -98,7 +98,6 @@ class Server {
         }
         if (this.serial != null && commandId != null) {
             const value = isNaN(command.value) ? 0 : command.value;
-            console.log("sended serial command", commandId);
             this.serial.write([commandId, value, '!']);
         }
     }
