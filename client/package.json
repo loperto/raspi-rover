@@ -1,27 +1,50 @@
 {
-  "name": "react-player",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.2",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.6.3",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^12.19.16",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
     "bootstrap": "^4.2.1",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-scripts-ts": "3.1.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.2",
     "sylvester.js": "^0.1.1",
-    "uclass": "^2.4.0"
+    "typescript": "^4.1.3",
+    "uclass": "^2.4.0",
+    "web-vitals": "^1.1.0"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.11.2",
-    "@types/jest": "^23.3.14",
-    "@types/node": "^10.17.5",
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.4",
-    "typescript": "^3.7.2"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "ignorePatterns": [
+      "**/broadway/*.js"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

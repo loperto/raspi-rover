@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { IProps, DirectionButton } from './directionPanel';
 import Joystick from './joystick';
 
@@ -15,7 +15,7 @@ export default class DirectionJoystick extends React.Component<IProps, IState>{
         };
     }
 
-    private onChangeDirection = (x: number, y: number) => {
+    onChangeDirection = (x: number, y: number) => {
         // console.log("direction joystick", "X:", x, "Y:", y);
         if (x >= 100 && this.state.currentStatus != DirectionButton.Right) {
             this.setState({ currentStatus: DirectionButton.Right });
@@ -44,7 +44,7 @@ export default class DirectionJoystick extends React.Component<IProps, IState>{
         }
     }
 
-    public render() {
+    render() {
         return (
             <Joystick
                 xValues={{ min: 0, max: 100 }}

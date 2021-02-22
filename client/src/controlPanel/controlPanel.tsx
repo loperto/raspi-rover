@@ -28,15 +28,16 @@ export let TelemetryWidget: SFC<{ icon: string, value: string }> = ({ icon, valu
 }
 
 export default class ControlPanel extends React.Component<{}, IState> {
-
-    private rover: RoverControl;
-    private canvas: HTMLCanvasElement;
+    rover: RoverControl | null;
+    canvas: HTMLCanvasElement | null;
     constructor(props: {}) {
         super(props);
         this.state = {
             telemetry: null,
             currentSpeed: 100,
         };
+        this.rover = null;
+        this.canvas = null;
     }
 
     isMobileDevice() {
@@ -44,16 +45,18 @@ export default class ControlPanel extends React.Component<{}, IState> {
     };
 
     resizeCanvas = () => {
-        this.canvas.style.width = window.innerWidth + "px";
+        if (this.canvas)
+            this.canvas.style.width = `${window.innerWidth}px`;
         setTimeout(() => {
-            this.canvas.style.height = window.innerHeight + "px";
+            if (this.canvas)
+                this.canvas.style.height = window.innerHeight + "px";
         }, 0);
     };
 
-    public componentDidMount() {
+    componentDidMount() {
         window.onresize = this.resizeCanvas;
         this.resizeCanvas();
-        this.rover = new RoverControl(this.canvas, "webgl");
+        this.rover = new RoverControl(this.canvas!, "webgl");
         if (process.env.NODE_ENV == "production") {
             const uri = `ws://${window.location.hostname}:${window.location.port}`;
             this.rover.connect(uri, this.onCanvasReady);
@@ -61,63 +64,63 @@ export default class ControlPanel extends React.Component<{}, IState> {
         }
     }
 
-    public componentWillUnMount() {
-        this.rover.Messages.unregister(this.messageListener);
-        this.rover.disconnect();
+    componentWillUnmount() {
+        this.rover!.Messages.unregister(this.messageListener);
+        this.rover!.disconnect();
     }
 
-    private onCanvasReady = () => {
+    onCanvasReady = () => {
         this.forceUpdate();
     }
 
-    private messageListener = (telemetry: ITelemetry) => {
+    messageListener = (telemetry: ITelemetry) => {
         this.setState({ telemetry });
     }
 
-    private led = () => {
-        this.rover.send({ type: "led", value: 0 });
+    led = () => {
+        this.rover!.send({ type: "led", value: 0 });
     }
 
-    private beep = () => {
-        this.rover.send({ type: "beep", value: 300 });
+    beep = () => {
+        this.rover!.send({ type: "beep", value: 300 });
     }
 
-    private forward = () => {
-        this.rover.send({ type: "forward", value: 0 });
+    forward = () => {
+        this.rover!.send({ type: "forward", value: 0 });
     }
 
-    private backward = () => {
-        this.rover.send({ type: "backward", value: 0 });
+    backward = () => {
+        this.rover!.send({ type: "backward", value: 0 });
     }
 
-    private left = () => {
-        this.rover.send({ type: "left", value: 0 });
+    left = () => {
+        this.rover!.send({ type: "left", value: 0 });
     }
 
-    private right = () => {
-        this.rover.send({ type: "right", value: 0 });
+    right = () => {
+        this.rover!.send({ type: "right", value: 0 });
     }
 
-    private stop = () => {
-        this.rover.send({ type: "stop", value: 0 });
+    stop = () => {
+        this.rover!.send({ type: "stop", value: 0 });
     }
 
-    private shot = () => {
-        this.rover.send({ type: "shot", value: 0 });
+    shot = () => {
+        this.rover!.send({ type: "shot", value: 0 });
     }
 
-    // private onChangeSpeed = (speed: number) => {
+    //  onChangeSpeed = (speed: number) => {
     //     this.rover.send({ type: "speed", value: speed });
     //     this.setState({ currentSpeed: speed });
     // }
 
-    public onChangeCamera = (x: number, y: number) => {
+    onChangeCamera = (x: number, y: number) => {
         console.log("camera", "X:", x, "Y:", y);
-        this.rover.send({ type: "cameraX", value: x });
-        this.rover.send({ type: "cameraY", value: y })
+        this.rover!.send({ type: "cameraX", value: x });
+        this.rover!.send({ type: "cameraY", value: y })
     }
 
-    public render() {
+    render() {
         const pitch = this.state.telemetry && (this.state.telemetry.pitch * -1);
         const roll = this.state.telemetry && (this.state.telemetry.roll * -1);
         return (

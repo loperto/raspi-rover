@@ -1,6 +1,10 @@
+// @ts-ignore
 import * as Avc from "./broadway/Decoder";
+// @ts-ignore
 import * as YUVWebGLCanvas from "./broadway/YUVWebGLCanvas";
+// @ts-ignore
 import * as YUVCanvas from "./broadway/YUVCanvas";
+// @ts-ignore
 import * as Size from "./broadway/Size";
 import { TEvent } from './Event';
 
@@ -17,24 +21,24 @@ export interface ITelemetry {
 }
 
 export default class WebPlayer {
-    private canvas: HTMLCanvasElement;
-    private type: string;
-    private ws: WebSocket;
-    private avc: typeof Avc;
+    canvas: HTMLCanvasElement;
+    type: string;
+    ws: WebSocket | undefined = undefined;
+    avc: typeof Avc;
     pktnum: number = 0;
-    private running: boolean;
-    private framesList: Uint8Array[];
-    private refreshInterval: NodeJS.Timer;
-    public Messages = new TEvent<ITelemetry>();
+    running: boolean;
+    framesList: Uint8Array[];
+    refreshInterval: NodeJS.Timeout | null = null;
+    Messages = new TEvent<ITelemetry>();
 
     constructor(canvas: HTMLCanvasElement, canvastype: string) {
         this.canvas = canvas;
         this.type = canvastype;
         this.running = false;
-        this.framesList = [];        
+        this.framesList = [];
     }
 
-    private shiftFrame = (onCanvasReady: () => void) => {
+    shiftFrame = (onCanvasReady: () => void) => {
         if (!this.running)
             return;
 
@@ -50,21 +54,21 @@ export default class WebPlayer {
         onCanvasReady();
     }
 
-    private initCanvas = (width: number, height: number) => {
+    initCanvas = (width: number, height: number) => {
         var canvasFactory = this.type == "webgl" || this.type == "YUVWebGLCanvas"
             ? YUVWebGLCanvas
             : YUVCanvas;
 
-        var canvas = new canvasFactory(this.canvas, new Size(width, height));
+        var canvas = new canvasFactory(this.canvas, new Size.default(width, height));
         this.avc.onPictureDecoded = canvas.decode;
     }
 
-    private emitTelemetry = (cmd: ITelemetry) => {
+    emitTelemetry = (cmd: ITelemetry) => {
         console.log("Incoming request", cmd);
         this.Messages.emit(cmd);
     }
 
-    public connect = (url: string, onCanvasReady: () => void) => {
+    connect = (url: string, onCanvasReady: () => void) => {
         if (this.ws != undefined) {
             this.ws.close();
             delete this.ws;
@@ -95,14 +99,14 @@ export default class WebPlayer {
         };
     }
 
-    public disconnect = () => {
+    disconnect = () => {
         this.running = false;
         this.send({ type: "stop_camera", value: 0 });
-        clearInterval(this.refreshInterval);
+        clearInterval(this.refreshInterval!);
     }
 
-    public send = (command: ICommand) => {
+    send = (command: ICommand) => {
         if (this.running)
-            this.ws.send(JSON.stringify(command));
+            this.ws?.send(JSON.stringify(command));
     }
 }
