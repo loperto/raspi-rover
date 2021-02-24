@@ -82,7 +82,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
     }
 
     beep = () => {
-        this.rover!.send({ type: "beep", value: 300 });
+        this.rover!.send({ type: "beep", value: 255 });
     }
 
     forward = () => {
