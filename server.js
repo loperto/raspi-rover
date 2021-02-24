@@ -5,7 +5,7 @@ const Serial = require("./serial");
 const os = require("os");
 
 function getDefaultSerialPort(osName) {
-    const port = osName === "Linux" ? "/dev/ttyAMA0" : "COM4";
+    const port = osName === "Linux" ? "/dev/ttyAMA0" : "COM5";
     console.log("Port auto discovery failed try default port:", port, "Operating system:", osName);
     return port;
 }
@@ -97,8 +97,8 @@ class Server {
                 break;
         }
         if (this.serial != null && commandId != null) {
-            const value = isNaN(command.value) ? 0 : command.value;
-            this.serial.write([commandId, value, '!']);
+            const value = isNaN(command.value) ? 1 : Math.max(command.value, 1);
+            this.serial.write([commandId, value, '\0']);
         }
     }
 

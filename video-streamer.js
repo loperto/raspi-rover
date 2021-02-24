@@ -4,6 +4,7 @@ const spawn = require("child_process").spawn;
 const util = require("util");
 const Splitter = require("stream-split");
 const NALseparator = Buffer.from([0, 0, 0, 1]);//NAL break
+const os = require("os");
 
 class VideoStreamer {
     constructor(ws, options) {
@@ -18,8 +19,13 @@ class VideoStreamer {
     }
 
     start_stream() {
+        if (os.type() !== "Linux") {
+            console.log("video stream not available on windows");
+            return;
+        }
         if (this.running) {
             console.log("video stream already running!");
+            return;
         }
         this.readStream = this.get_stream();
         this.readStream = this.readStream.pipe(new Splitter(NALseparator));
