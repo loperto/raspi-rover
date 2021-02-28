@@ -41,6 +41,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define MAX_THROTTLE 2000
 // our servo # counter
 uint8_t servonum = 0;
+const uint8_t GUN_CH1 = 4;
+const uint8_t GUN_CH2 = 5;
+const uint8_t GUN_LEVER = 2;
+const uint8_t GUN_LOADER = 3;
 
 void initMotors()
 {
@@ -80,12 +84,45 @@ void setup()
   initMotors();
 }
 
+void servoWrite(uint8_t channel, uint8_t degrees)
+{
+  int pulselength = map(degrees, 0, 180, SERVOMIN, SERVOMAX);
+  pwm.setPWM(channel, 0, pulselength);
+}
+
+void gunShot()
+{
+  pwm.writeMicroseconds(GUN_CH1, 1250);
+  pwm.writeMicroseconds(GUN_CH2, 1250);
+  delay(200);
+  servoWrite(GUN_LOADER, 90);
+  delay(800);
+  servoWrite(GUN_LOADER, 180);
+  delay(400);
+  pwm.writeMicroseconds(GUN_CH1, 1000);
+  pwm.writeMicroseconds(GUN_CH2, 1000);
+}
+
 void loop()
 {
-  pwm.writeMicroseconds(4, 1500);
-  pwm.writeMicroseconds(5, 1500);
-  delay(3000);
-  pwm.writeMicroseconds(4, 1000);
-  pwm.writeMicroseconds(5, 1000);
-  delay(3000);
+  if (Serial.available())
+  {
+    char command = Serial.read();
+    switch (command)
+    {
+    case 's':
+      gunShot();
+      break;
+    case '1':
+      servoWrite(GUN_LEVER, 40);
+      break;
+    default:
+    case '2':
+      servoWrite(GUN_LEVER, 100);
+      break;
+    case '3':
+      servoWrite(GUN_LEVER, 160);
+      break;
+    }
+  }
 }
