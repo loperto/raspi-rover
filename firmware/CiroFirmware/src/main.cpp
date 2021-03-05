@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <L298N.h>
+#include <NewPing.h>
 
 const uint8_t MOTOR_RIGHT_E = 5; //pin for speed control en1
 const uint8_t MOTOR_RIGHT_1 = 4;
@@ -10,6 +11,13 @@ const uint8_t MOTOR_LEFT_E = 6; //pin for speed control en2
 const uint8_t MOTOR_LEFT_1 = 8;
 const uint8_t MOTOR_LEFT_2 = 12;
 uint8_t speed = 150;
+
+//Ultrasonic Sensor HC-SR04
+const uint8_t TRIGGER_PIN = PIN_A1; // Arduino pin tied to trigger pin on the ultrasonic sensor.
+const uint8_t ECHO_PIN = PIN_A0;    // Arduino pin tied to echo pin on the ultrasonic sensor.
+const uint8_t MAX_DISTANCE = 200;   // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
 L298N motorRight(MOTOR_RIGHT_E, MOTOR_RIGHT_1, MOTOR_RIGHT_2);
 L298N motorLeft(MOTOR_LEFT_E, MOTOR_LEFT_1, MOTOR_LEFT_2);
@@ -142,4 +150,8 @@ void loop()
       break;
     }
   }
+
+  Serial.print("Ping: ");
+  Serial.print(sonar.ping_cm());
+  Serial.println("cm");
 }
