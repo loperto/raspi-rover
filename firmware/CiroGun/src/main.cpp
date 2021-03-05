@@ -110,6 +110,9 @@ void loop()
     char command = Serial.read();
     switch (command)
     {
+    case 'f':
+      gunShot();
+      break;
     case 's':
       gunShot();
       break;
