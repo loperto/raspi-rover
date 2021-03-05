@@ -3,6 +3,9 @@
 #include <L298N.h>
 #include <NewPing.h>
 
+const uint8_t CAM_LED_PIN = 13;
+const uint8_t OPT_LED_PIN = 10;
+
 const uint8_t MOTOR_RIGHT_E = 5; //pin for speed control en1
 const uint8_t MOTOR_RIGHT_1 = 4;
 const uint8_t MOTOR_RIGHT_2 = 7;
@@ -98,9 +101,19 @@ void gunShot()
   pwm.writeMicroseconds(GUN_CH2, MIN_THROTTLE);
 }
 
+void toggleLeds(uint8_t ledPin)
+{
+  if (digitalRead(ledPin) == HIGH)
+    analogWrite(ledPin, 0);
+  else
+    analogWrite(ledPin, 255);
+}
+
 void setup()
 {
   Serial.begin(115200);
+  pinMode(CAM_LED_PIN, OUTPUT);
+  pinMode(OPT_LED_PIN, OUTPUT);
   motorLeft.stop();
   motorRight.stop();
   motorLeft.setSpeed(speed);
@@ -137,6 +150,12 @@ void loop()
       break;
     case 'g':
       gunShot();
+      break;
+    case 'q':
+      toggleLeds(CAM_LED_PIN);
+      break;
+    case 'w':
+      toggleLeds(OPT_LED_PIN);
       break;
     case '1':
       servoWrite(GUN_LEVER, 40);
