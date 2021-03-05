@@ -3,12 +3,13 @@
 
 unsigned long lastPingReceived = 0;
 unsigned int pingTimeout = 10000;
-const uint8_t readyPin = 4;
+const uint8_t readyPin = 11;
 
 void setup()
 {
   pinMode(readyPin, OUTPUT);
   Serial.begin(115200);
+  Serial1.begin(115200);
   digitalWrite(readyPin, HIGH);
   delay(500);
   digitalWrite(readyPin, LOW);
@@ -16,6 +17,7 @@ void setup()
 
 void execCommand(uint8_t type, uint8_t value)
 {
+  Serial.println("command");
   switch (type)
   {
   // case 1:
@@ -56,6 +58,7 @@ void execCommand(uint8_t type, uint8_t value)
   //   moveServoProgressive(gunLeverServoChannel, gunLeverAxisValue, value);
   //   break;
   case 99:
+    Serial.println("ping");
     lastPingReceived = millis();
     digitalWrite(readyPin, HIGH);
     break;
@@ -70,10 +73,10 @@ void execCommand(uint8_t type, uint8_t value)
 
 void loop()
 {
-  if (Serial.available())
+  if (Serial1.available())
   {
     uint8_t command[3];
-    Serial.readBytesUntil('\0', command, 3);
+    Serial1.readBytesUntil('\0', command, 3);
     uint8_t test = command[0];
     uint8_t test2 = command[1] - 1;
     execCommand(test, test2);
