@@ -3,6 +3,10 @@
 #include <L298N.h>
 #include <NewPing.h>
 
+unsigned long lastPingReceived = 0;
+const unsigned int pingTimeout = 10000;
+const uint8_t PING_LED_PIN = 11;
+
 const uint8_t CAM_LED_PIN = 13;
 const uint8_t OPT_LED_PIN = 10;
 
@@ -36,6 +40,9 @@ const uint8_t GUN_CH1 = 4;
 const uint8_t GUN_CH2 = 5;
 const uint8_t GUN_LEVER = 2;
 const uint8_t GUN_LOADER = 3;
+
+const uint8_t CAM_X_CH = 0;
+const uint8_t CAM_Y_CH = 1;
 
 void initMotors()
 {
@@ -109,11 +116,18 @@ void toggleLeds(uint8_t ledPin)
     analogWrite(ledPin, 255);
 }
 
+void changeMotorSpeed(uint8_t speed)
+{
+  motorLeft.setSpeed(speed);
+  motorRight.setSpeed(speed);
+}
+
 void setup()
 {
-  Serial.begin(115200);
+  Serial1.begin(115200);
   pinMode(CAM_LED_PIN, OUTPUT);
   pinMode(OPT_LED_PIN, OUTPUT);
+  pinMode(PING_LED_PIN, OUTPUT);
   motorLeft.stop();
   motorRight.stop();
   motorLeft.setSpeed(speed);
@@ -126,49 +140,112 @@ void setup()
   initMotors();
 }
 
+void execCommand(uint8_t type, uint8_t value)
+{
+  Serial.println("command");
+  switch (type)
+  {
+  case 1:
+    forward();
+    break;
+  case 2:
+    backward();
+    break;
+  case 3:
+    left();
+    break;
+  case 4:
+    right();
+    break;
+  case 5:
+    stop();
+    break;
+  case 6:
+    changeMotorSpeed(value);
+    break;
+  case 7:
+    servoWrite(CAM_X_CH, value);
+    break;
+  case 8:
+    servoWrite(CAM_Y_CH, value);
+    break;
+  case 9:
+    // beep(value);
+    break;
+  case 10:
+    toggleLeds(CAM_LED_PIN);
+    break;
+  case 11:
+    gunShot();
+    break;
+  case 12:
+    servoWrite(GUN_LEVER, value);
+    break;
+  case 99:
+    Serial.println("ping");
+    lastPingReceived = millis();
+    digitalWrite(PING_LED_PIN, HIGH);
+    break;
+  default:
+    Serial.print(type);
+    Serial.print(" ");
+    Serial.print(value);
+    Serial.println(" command not found!");
+    break;
+  }
+}
+
 void loop()
 {
-  if (Serial.available())
+  if (Serial1.available())
   {
-    char command = Serial.read();
-    switch (command)
-    {
-    case 'f':
-      forward();
-      break;
-    case 'b':
-      forward();
-      break;
-    case 'l':
-      forward();
-      break;
-    case 'r':
-      forward();
-      break;
-    case 's':
-      stop();
-      break;
-    case 'g':
-      gunShot();
-      break;
-    case 'q':
-      toggleLeds(CAM_LED_PIN);
-      break;
-    case 'w':
-      toggleLeds(OPT_LED_PIN);
-      break;
-    case '1':
-      servoWrite(GUN_LEVER, 40);
-      break;
-    default:
-    case '2':
-      servoWrite(GUN_LEVER, 100);
-      break;
-    case '3':
-      servoWrite(GUN_LEVER, 160);
-      break;
-    }
+    uint8_t command[3];
+    Serial1.readBytesUntil('\0', command, 3);
+    uint8_t test = command[0];
+    uint8_t test2 = command[1] - 1;
+    execCommand(test, test2);
   }
+  // if (Serial.available())
+  // {
+  //   char command = Serial.read();
+  //   switch (command)
+  //   {
+  //   case 'f':
+  //     forward();
+  //     break;
+  //   case 'b':
+  //     forward();
+  //     break;
+  //   case 'l':
+  //     forward();
+  //     break;
+  //   case 'r':
+  //     forward();
+  //     break;
+  //   case 's':
+  //     stop();
+  //     break;
+  //   case 'g':
+  //     gunShot();
+  //     break;
+  //   case 'q':
+  //     toggleLeds(CAM_LED_PIN);
+  //     break;
+  //   case 'w':
+  //     toggleLeds(OPT_LED_PIN);
+  //     break;
+  //   case '1':
+  //     servoWrite(GUN_LEVER, 40);
+  //     break;
+  //   default:
+  //   case '2':
+  //     servoWrite(GUN_LEVER, 100);
+  //     break;
+  //   case '3':
+  //     servoWrite(GUN_LEVER, 160);
+  //     break;
+  //   }
+  // }
 
   Serial.print("Ping: ");
   Serial.print(sonar.ping_cm());
