@@ -8,8 +8,9 @@ import * as YUVCanvas from "./broadway/YUVCanvas";
 import * as Size from "./broadway/Size";
 import { TEvent } from './Event';
 
+type CommandType = "start_camera" | "stop_camera" | "cameraY" | "cameraX" | "gunlever" | "speed" | "shot" | "stop" | "right" | "left" | "backward" | "forward" | "beep" | "led2" | "led";
 export interface ICommand {
-    type: string;
+    type: CommandType;
     value: number;
 }
 
@@ -81,7 +82,7 @@ export default class WebPlayer {
             this.running = true;
             console.log("Connected to " + url);
             this.initCanvas(960, 540);
-            this.send({ type: "start_camera", value: 0 });
+            this.sendCommand("start_camera");
         };
 
         this.ws.onmessage = (evt: MessageEvent) => {
@@ -101,12 +102,16 @@ export default class WebPlayer {
 
     disconnect = () => {
         this.running = false;
-        this.send({ type: "stop_camera", value: 0 });
+        this.sendCommand("stop_camera");
         clearInterval(this.refreshInterval!);
     }
 
-    send = (command: ICommand) => {
-        if (this.running)
-            this.ws?.send(JSON.stringify(command));
+    sendCommand = (type: CommandType, value?: number) => {
+        if (this.running) {
+            const commandString = JSON.stringify({ type, value: value ?? 0 });
+            console.log("sended command: ", commandString)
+            this.ws?.send(commandString);
+        }
     }
+
 }

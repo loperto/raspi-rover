@@ -1,30 +1,20 @@
 import * as React from "react";
-import { SFC } from 'react';
 import "./controlPanel.css";
-// import RangeInput from "../common/rangeInput/rangeInput";
 import DirectionPanel from "./directionPanel";
 import InclinationMonitor from "./inclinationMonitor";
 import RoverControl, { ITelemetry } from "../roverControl";
 import Joystick from './joystick';
 import DirectionJoystick from './directionJoystick';
+import RangeInput from "../common/rangeInput/rangeInput";
+import { TelemetryWidget } from "./telemetryWidget";
 
 interface IState {
     currentSpeed: number;
+    gunLever: number;
+    ledBrightness: number;
+    led2Brightness: number;
+    settingsShowed: boolean;
     telemetry: ITelemetry | null;
-}
-
-export let TelemetryWidget: SFC<{ icon: string, value: string }> = ({ icon, value, children }) => {
-    const height: number = 30;
-    return (
-        <div className="text-center" style={{ margin: 5, color: "white" }}>
-            <div style={{ backgroundColor: "blue", padding: 5, width: 30, height: height, display: "inline-block" }}>
-                <i className={icon} />
-            </div>
-            <div style={{ backgroundColor: "black", padding: 5, height: height, minWidth: 40, display: "inline-block" }}>
-                <span style={{ fontSize: 12 }}>{value}</span>
-            </div>
-        </div >
-    );
 }
 
 export default class ControlPanel extends React.Component<{}, IState> {
@@ -35,6 +25,10 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.state = {
             telemetry: null,
             currentSpeed: 100,
+            gunLever: 0,
+            ledBrightness: 150,
+            led2Brightness: 150,
+            settingsShowed: false,
         };
         this.rover = null;
         this.canvas = null;
@@ -44,18 +38,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
         return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
     };
 
-    resizeCanvas = () => {
-        if (this.canvas)
-            this.canvas.style.width = `${window.innerWidth}px`;
-        setTimeout(() => {
-            if (this.canvas)
-                this.canvas.style.height = window.innerHeight + "px";
-        }, 0);
-    };
-
     componentDidMount() {
-        window.onresize = this.resizeCanvas;
-        this.resizeCanvas();
         this.rover = new RoverControl(this.canvas!, "webgl");
         if (process.env.NODE_ENV == "production") {
             const uri = `ws://${window.location.hostname}:${window.location.port}`;
@@ -78,146 +61,181 @@ export default class ControlPanel extends React.Component<{}, IState> {
     }
 
     led = () => {
-        this.rover!.send({ type: "led", value: 0 });
+        this.rover?.sendCommand("led", this.state.ledBrightness);
+    }
+
+    led2 = () => {
+        this.rover?.sendCommand("led2", this.state.led2Brightness);
     }
 
     beep = () => {
-        this.rover!.send({ type: "beep", value: 255 });
+        this.rover?.sendCommand("beep", 255);
     }
 
     forward = () => {
-        this.rover!.send({ type: "forward", value: 0 });
+        this.rover?.sendCommand("forward");
     }
 
     backward = () => {
-        this.rover!.send({ type: "backward", value: 0 });
+        this.rover?.sendCommand("backward");
     }
 
     left = () => {
-        this.rover!.send({ type: "left", value: 0 });
+        this.rover?.sendCommand("left");
     }
 
     right = () => {
-        this.rover!.send({ type: "right", value: 0 });
+        this.rover?.sendCommand("right");
     }
 
     stop = () => {
-        this.rover!.send({ type: "stop", value: 0 });
+        this.rover?.sendCommand("stop");
     }
 
     shot = () => {
-        this.rover!.send({ type: "shot", value: 0 });
+        this.rover?.sendCommand("shot");
     }
 
-    //  onChangeSpeed = (speed: number) => {
-    //     this.rover.send({ type: "speed", value: speed });
-    //     this.setState({ currentSpeed: speed });
-    // }
+    onChangeSpeed = (speed: number) => {
+        this.rover!.sendCommand("speed", speed);
+        this.setState({ currentSpeed: speed });
+    }
+
+    onChangeGunLever = (speed: number) => {
+        this.rover!.sendCommand("gunlever", speed);
+        this.setState({ currentSpeed: speed });
+    }
 
     onChangeCamera = (x: number, y: number) => {
-        console.log("camera", "X:", x, "Y:", y);
-        this.rover!.send({ type: "cameraX", value: x });
-        this.rover!.send({ type: "cameraY", value: y })
+        this.rover!.sendCommand("cameraX", x);
+        this.rover!.sendCommand("cameraY", y)
     }
 
     render() {
         const pitch = this.state.telemetry && (this.state.telemetry.pitch * -1);
         const roll = this.state.telemetry && (this.state.telemetry.roll * -1);
+        const { currentSpeed, settingsShowed, led2Brightness, ledBrightness, gunLever } = this.state;
         return (
-            <div>
-                <canvas ref={x => this.canvas = x!} style={{ backgroundColor: "#36474f" }} />
-                <div>
-                    <div style={{
-                        position: "absolute",
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        width: "100%",
-                        top: 0,
-                        left: 0
-                    }}>
-                        <TelemetryWidget icon="fas fa-thermometer-half" value={this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"} />
-                        <TelemetryWidget icon="fas fa-satellite-dish" value={this.state.telemetry && this.state.telemetry.dist.toString() || "-"} />
-                        <TelemetryWidget icon="fas fa-tachometer-alt" value={this.state.currentSpeed.toString()} />
-                        <InclinationMonitor pitch={pitch || 0} roll={roll || 0} />
-                    </div>
-                    <div style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center"
-                    }}>
-                        <DirectionPanel
-                            onForward={this.forward}
-                            onBackward={this.backward}
-                            onLeft={this.left}
-                            onRight={this.right}
-                            onStop={this.stop} />
-                        <button
-                            type="button"
-                            title="toggle led"
-                            className="btn btn-outline-primary btn-cmd"
-                            onClick={this.led}>
-                            <i className="far fa-lightbulb" />
-                        </button>
-                        <button
-                            type="button"
-                            title="reproduce sound"
-                            className="btn btn-outline-primary btn-cmd"
-                            onClick={this.beep}>
-                            <i className="fas fa-volume-up" />
-                        </button>
-                        <button
-                            type="button"
-                            title="gun shot"
-                            className="btn btn-outline-danger btn-cmd"
-                            onClick={this.shot}>
-                            <i className="fas fa-bomb" />
-                        </button>
-                    </div>
-                    <div style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        display: "flex",
-                        flexDirection: "row",
-                        width: "100%",
-                        justifyContent: "space-between"
-                    }}>
-                        <DirectionJoystick
-                            onForward={this.forward}
-                            onBackward={this.backward}
-                            onLeft={this.left}
-                            onRight={this.right}
-                            onStop={this.stop}
-
-                        />
-                        <Joystick
-                            xValues={{ min: 0, max: 180 }}
-                            yValues={{ min: 0, max: 100 }}
-                            initialX={90}
-                            initialY={0}
-                            onChange={this.onChangeCamera}
-                            color="#ff3333"
-                            icon="fas fa-video"
-                            stacked
-                        />
-                        {/*
+            <div className="vw-100 vh-100 d-flex flex-column justify-content-between">
+                <canvas ref={x => this.canvas = x!}
+                    style={{ backgroundColor: "#36474f", position: "absolute", zIndex: -1 }}
+                    className="vw-100 vh-100"
+                />
+                <div className="d-flex justify-content-center align-items-center" >
+                    <TelemetryWidget
+                        icon="fas fa-thermometer-half"
+                        value={this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"}
+                    />
+                    <TelemetryWidget
+                        icon="fas fa-satellite-dish"
+                        value={this.state.telemetry && this.state.telemetry.dist.toString() || "-"}
+                    />
+                    <TelemetryWidget
+                        icon="fas fa-tachometer-alt"
+                        value={this.state.currentSpeed.toString()}
+                    />
+                    <InclinationMonitor
+                        pitch={pitch || 0}
+                        roll={roll || 0}
+                    />
+                </div>
+                <div className="d-flex flex-column justify-content-center">
+                    <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                            <DirectionPanel
+                                onForward={this.forward}
+                                onBackward={this.backward}
+                                onLeft={this.left}
+                                onRight={this.right}
+                                onStop={this.stop}
+                            />
+                        </div>
+                        {settingsShowed && <div className="d-flex justify-content-between text-white">
                             <RangeInput
                                 label="Speed"
-                                initialValue={this.state.currentSpeed}
+                                initialValue={currentSpeed}
                                 min={100}
                                 max={250}
                                 step={10}
                                 onChange={this.onChangeSpeed}
                             />
-                            */}
+                            <RangeInput
+                                label="Gun Lever"
+                                initialValue={gunLever}
+                                min={100}
+                                max={250}
+                                step={10}
+                                onChange={this.onChangeGunLever}
+                            />
+                            <RangeInput
+                                label="Led 1"
+                                initialValue={gunLever}
+                                min={50}
+                                max={255}
+                                step={10}
+                                onChange={this.led}
+                            />
+                            <RangeInput
+                                label="Led 2"
+                                initialValue={gunLever}
+                                min={50}
+                                max={255}
+                                step={10}
+                                onChange={this.led2}
+                            />
+                        </div>}
+                        <div className="d-flex flex-column">
+                            <button
+                                type="button"
+                                title="toggle led"
+                                className="btn btn-outline-primary btn-cmd"
+                                onClick={this.led}>
+                                <i className="far fa-lightbulb" />
+                            </button>
+                            <button
+                                type="button"
+                                title="reproduce sound"
+                                className="btn btn-outline-primary btn-cmd"
+                                onClick={this.beep}>
+                                <i className="fas fa-volume-up" />
+                            </button>
+                            <button
+                                type="button"
+                                title="gun shot"
+                                className="btn btn-outline-danger btn-cmd"
+                                onClick={this.shot}>
+                                <i className="fas fa-bomb" />
+                            </button>
+                            <button
+                                type="button"
+                                title="settings"
+                                className="btn btn-outline-secondary btn-cmd"
+                                onClick={() => this.setState({ settingsShowed: !settingsShowed })}>
+                                <i className="fas fa-cog" />
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div >
+                <div className="d-flex justify-content-between mr-5 ml-5 p-0">
+                    <DirectionJoystick
+                        onForward={this.forward}
+                        onBackward={this.backward}
+                        onLeft={this.left}
+                        onRight={this.right}
+                        onStop={this.stop}
+                    />
+                    <Joystick
+                        xValues={{ min: 0, max: 180 }}
+                        yValues={{ min: 0, max: 100 }}
+                        initialX={90}
+                        initialY={0}
+                        onChange={this.onChangeCamera}
+                        color="#ff3333"
+                        icon="fas fa-video"
+                        stacked
+                    />
+                </div>
+            </div>
         );
     }
 }
