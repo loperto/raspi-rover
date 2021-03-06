@@ -91,6 +91,7 @@ class Server {
                 break;
             case "gunlever":
                 commandId = 12;
+                break;
             case "led2":
                 commandId = 13;
                 break;
