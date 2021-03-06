@@ -108,12 +108,12 @@ void gunShot()
   pwm.writeMicroseconds(GUN_CH2, MIN_THROTTLE);
 }
 
-void toggleLeds(uint8_t ledPin)
+void toggleLeds(uint8_t ledPin, uint8_t pwmValue)
 {
   if (digitalRead(ledPin) == HIGH)
     analogWrite(ledPin, 0);
   else
-    analogWrite(ledPin, 255);
+    analogWrite(ledPin, pwmValue);
 }
 
 void changeMotorSpeed(uint8_t speed)
@@ -173,13 +173,16 @@ void execCommand(uint8_t type, uint8_t value)
     // beep(value);
     break;
   case 10:
-    toggleLeds(CAM_LED_PIN);
+    toggleLeds(CAM_LED_PIN, value);
     break;
   case 11:
     gunShot();
     break;
   case 12:
     servoWrite(GUN_LEVER, value);
+    break;
+  case 13:
+    toggleLeds(OPT_LED_PIN, value);
     break;
   case 99:
     Serial.println("ping");
@@ -204,6 +207,10 @@ void loop()
     uint8_t test = command[0];
     uint8_t test2 = command[1] - 1;
     execCommand(test, test2);
+  }
+  if ((millis() - lastPingReceived) > pingTimeout)
+  {
+    digitalWrite(PING_LED_PIN, LOW);
   }
   // if (Serial.available())
   // {
@@ -246,7 +253,6 @@ void loop()
   //     break;
   //   }
   // }
-
   Serial.print("Ping: ");
   Serial.print(sonar.ping_cm());
   Serial.println("cm");
