@@ -2,6 +2,11 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <L298N.h>
 #include <NewPing.h>
+#include <MPU6050_tockn.h>
+
+unsigned long lastTelemetrySend = 0;
+const uint16_t telemetryFrequency = 500;
+MPU6050 mpu6050(Wire);
 
 unsigned long lastPingReceived = 0;
 const unsigned int pingTimeout = 10000;
@@ -133,6 +138,9 @@ void setup()
   motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
 
+  Wire.begin();
+  mpu6050.begin();
+
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(50);
@@ -198,6 +206,69 @@ void execCommand(uint8_t type, uint8_t value)
   }
 }
 
+void float2Bytes(byte bytes_temp[4], float float_variable)
+{
+  union
+  {
+    float a;
+    unsigned char bytes[4];
+  } thing;
+  thing.a = float_variable;
+  memcpy(bytes_temp, thing.bytes, 4);
+}
+
+void sendTelemetry()
+{
+  long distance = sonar.ping_cm();
+  mpu6050.update();
+  float temp = mpu6050.getTemp();
+  float angleX = mpu6050.getAccAngleX();
+  float angleY = mpu6050.getAccAngleY();
+
+  Serial.print("Ping: ");
+  Serial.println(distance);
+  uint8_t distanceBytes[4];
+  float2Bytes(distanceBytes, distance);
+
+  Serial.print("Temp: ");
+  Serial.println(temp);
+  uint8_t tempBytes[4];
+  float2Bytes(tempBytes, temp);
+
+  Serial.print("angleX: ");
+  Serial.println(angleX);
+  uint8_t angleXBytes[4];
+  float2Bytes(angleXBytes, angleX);
+
+  Serial.print("angleY: ");
+  Serial.println(angleY);
+  uint8_t angleYBytes[4];
+  float2Bytes(angleYBytes, angleY);
+
+  uint8_t allBytes[] = {
+      distanceBytes[0],
+      distanceBytes[1],
+      distanceBytes[2],
+      distanceBytes[3],
+      tempBytes[0],
+      tempBytes[1],
+      tempBytes[2],
+      tempBytes[3],
+      angleXBytes[0],
+      angleXBytes[1],
+      angleXBytes[2],
+      angleXBytes[3],
+      angleYBytes[0],
+      angleYBytes[1],
+      angleYBytes[2],
+      angleYBytes[3],
+      '\0',
+  };
+
+  // Serial.write(allBytes, sizeof(allBytes));
+  // Serial1.write(allBytes, sizeof(allBytes));
+}
+
 void loop()
 {
   if (Serial1.available())
@@ -208,10 +279,31 @@ void loop()
     uint8_t test2 = command[1] - 1;
     execCommand(test, test2);
   }
-  if ((millis() - lastPingReceived) > pingTimeout)
+  else
   {
-    digitalWrite(PING_LED_PIN, LOW);
+    unsigned long currentMillis = millis();
+    if ((currentMillis - lastPingReceived) > pingTimeout)
+    {
+      digitalWrite(PING_LED_PIN, LOW);
+    }
+    if ((currentMillis - lastTelemetrySend) > telemetryFrequency)
+    {
+      sendTelemetry();
+      lastTelemetrySend = currentMillis;
+      // byte dataArray[17];
+      // byte *b = (byte *)&distance;
+      // for (size_t i = 0; i < 17; i++)
+      // {
+      //   dataArray[i] = ((uint8_t *)&distance)[0]
+      // }
+      // byte dataArray[4] = {
+      //     ((uint8_t *)&a)[0],
+      //     ((uint8_t *)&a)[1],
+      //     ((uint8_t *)&a)[2],
+      //     ((uint8_t *)&a)[3]};
+    }
   }
+
   // if (Serial.available())
   // {
   //   char command = Serial.read();
@@ -253,7 +345,4 @@ void loop()
   //     break;
   //   }
   // }
-  Serial.print("Ping: ");
-  Serial.print(sonar.ping_cm());
-  Serial.println("cm");
 }
