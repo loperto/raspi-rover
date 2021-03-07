@@ -40,11 +40,11 @@ export default class ControlPanel extends React.Component<{}, IState> {
 
     componentDidMount() {
         this.rover = new RoverControl(this.canvas!, "webgl");
-        if (process.env.NODE_ENV == "production") {
-            const uri = `ws://${window.location.hostname}:${window.location.port}`;
-            this.rover.connect(uri, this.onCanvasReady);
-            this.rover.Messages.register(this.messageListener);
-        }
+        // if (process.env.NODE_ENV == "production") {
+        const uri = `ws://192.168.178.32:8080`;
+        this.rover.connect(uri, this.onCanvasReady);
+        this.rover.Messages.register(this.messageListener);
+        // }
     }
 
     componentWillUnmount() {
@@ -60,12 +60,14 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.setState({ telemetry });
     }
 
-    led = () => {
-        this.rover?.sendCommand("led", this.state.ledBrightness);
+    led = (ledBrightness: number) => {
+        this.setState({ ledBrightness });
+        this.rover?.sendCommand("led", ledBrightness);
     }
 
-    led2 = () => {
-        this.rover?.sendCommand("led2", this.state.led2Brightness);
+    led2 = (led2Brightness: number) => {
+        this.setState({ led2Brightness });
+        this.rover?.sendCommand("led2", led2Brightness);
     }
 
     beep = () => {
@@ -97,18 +99,18 @@ export default class ControlPanel extends React.Component<{}, IState> {
     }
 
     onChangeSpeed = (speed: number) => {
-        this.rover!.sendCommand("speed", speed);
+        this.rover?.sendCommand("speed", speed);
         this.setState({ currentSpeed: speed });
     }
 
-    onChangeGunLever = (speed: number) => {
-        this.rover!.sendCommand("gunlever", speed);
-        this.setState({ currentSpeed: speed });
+    onChangeGunLever = (lever: number) => {
+        this.rover?.sendCommand("gunlever", lever);
+        this.setState({ gunLever: lever });
     }
 
     onChangeCamera = (x: number, y: number) => {
-        this.rover!.sendCommand("cameraX", x);
-        this.rover!.sendCommand("cameraY", y)
+        this.rover?.sendCommand("cameraX", x);
+        this.rover?.sendCommand("cameraY", y)
     }
 
     render() {
@@ -162,14 +164,14 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             <RangeInput
                                 label="Gun Lever"
                                 initialValue={gunLever}
-                                min={100}
-                                max={250}
-                                step={10}
+                                min={0}
+                                max={180}
+                                step={20}
                                 onChange={this.onChangeGunLever}
                             />
                             <RangeInput
                                 label="Led 1"
-                                initialValue={gunLever}
+                                initialValue={ledBrightness}
                                 min={50}
                                 max={255}
                                 step={10}
@@ -177,7 +179,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             />
                             <RangeInput
                                 label="Led 2"
-                                initialValue={gunLever}
+                                initialValue={led2Brightness}
                                 min={50}
                                 max={255}
                                 step={10}
@@ -189,7 +191,14 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                 type="button"
                                 title="toggle led"
                                 className="btn btn-outline-primary btn-cmd"
-                                onClick={this.led}>
+                                onClick={() => this.led(ledBrightness > 0 ? 0 : 110)}>
+                                <i className="far fa-lightbulb" />
+                            </button>
+                            <button
+                                type="button"
+                                title="toggle led"
+                                className="btn btn-outline-secondary btn-cmd"
+                                onClick={() => this.led2(led2Brightness > 0 ? 0 : 110)}>
                                 <i className="far fa-lightbulb" />
                             </button>
                             <button
