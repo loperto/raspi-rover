@@ -107,14 +107,14 @@ class Server {
 
     onSerialMessage(data) {
         console.log(data.toString());
-        // var value1 = Buffer.from(data.slice(0, 4)).readFloatLE(0);
-        // var value2 = Buffer.from(data.slice(4, 4)).readFloatLE(0);
-        // var value3 = Buffer.from(data.slice(8, 4)).readFloatLE(0);
-        // var value4 = Buffer.from(data.slice(12, 4)).readFloatLE(0);
-        // console.log("distance: ", value1, "temp: ", value2, "angleX: ", value3, "angleY: ", value4);
+        var value1 = Buffer.from(data.slice(0, 4)).readFloatLE(0);
+        var value2 = Buffer.from(data.slice(4, 8)).readFloatLE(0);
+        var value3 = Buffer.from(data.slice(8, 12)).readFloatLE(0);
+        var value4 = Buffer.from(data.slice(12, 16)).readFloatLE(0);
+        console.log("distance: ", value1, "temp: ", value2, "angleX: ", value3, "angleY: ", value4);
         for (let client of this.wss.clients) {
             if (client.readyState === WebSocket.OPEN)
-                client.send(data.toString());
+                client.send(data);
         }
 
     }

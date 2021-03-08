@@ -41,7 +41,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
     componentDidMount() {
         this.rover = new RoverControl(this.canvas!, "webgl");
         // if (process.env.NODE_ENV == "production") {
-        const uri = `ws://192.168.178.32:8080`;
+        // const uri = `ws://${window.location.hostname}:${window.location.port}`;
+        const uri = `ws://localhost:8080`;
         this.rover.connect(uri, this.onCanvasReady);
         this.rover.Messages.register(this.messageListener);
         // }

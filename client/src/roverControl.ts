@@ -85,12 +85,24 @@ export default class WebPlayer {
             this.sendCommand("start_camera");
         };
 
-        this.ws.onmessage = (evt: MessageEvent) => {
-            if (typeof evt.data == "string")
-                return this.emitTelemetry(JSON.parse(evt.data));
-            this.pktnum++;
-            var frame = new Uint8Array(evt.data);
-            this.framesList.push(frame);
+        this.ws.onmessage = (evt: MessageEvent<ArrayBuffer>) => {
+            if (evt.data == null) return;
+            // if (typeof evt.data == "string")
+            //     return this.emitTelemetry(JSON.parse(evt.data));
+            const d = new Int8Array(evt.data);
+            if (d.length === 17 && d[16] === 0) {
+                var dist = Buffer.from(evt.data.slice(0, 4)).readFloatLE(0);
+                var temp = Buffer.from(evt.data.slice(4, 8)).readFloatLE(0);
+                var roll = Buffer.from(evt.data.slice(8, 12)).readFloatLE(0);
+                var pitch = Buffer.from(evt.data.slice(12, 16)).readFloatLE(0);
+                console.log(dist, temp, roll, pitch);
+                this.emitTelemetry({ dist, temp, roll, pitch })
+            }
+            else {
+                this.pktnum++;
+                var frame = new Uint8Array(evt.data);
+                this.framesList.push(frame);
+            }
         };
 
         this.refreshInterval = setInterval(() => this.shiftFrame(onCanvasReady), 83.33);
