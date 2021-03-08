@@ -131,8 +131,8 @@ void sendTelemetry()
       '\0',
   };
 
-  Serial.write(allBytes, sizeof(allBytes));
-  Serial.flush();
+  Serial.write(allBytes, sizeof(allBytes));  
+  Serial.println();
 }
 
 void loop()
