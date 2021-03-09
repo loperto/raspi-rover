@@ -85,22 +85,23 @@ export default class WebPlayer {
             this.sendCommand("start_camera");
         };
 
-        this.ws.onmessage = (evt: MessageEvent<ArrayBuffer>) => {
-            if (evt.data == null) return;
-            // if (typeof evt.data == "string")
-            //     return this.emitTelemetry(JSON.parse(evt.data));
-            const d = new Int8Array(evt.data);
-            if (d.length === 17 && d[16] === 0) {
-                var dist = Buffer.from(evt.data.slice(0, 4)).readFloatLE(0);
-                var temp = Buffer.from(evt.data.slice(4, 8)).readFloatLE(0);
-                var roll = Buffer.from(evt.data.slice(8, 12)).readFloatLE(0);
-                var pitch = Buffer.from(evt.data.slice(12, 16)).readFloatLE(0);
+        this.ws.onmessage = (message: MessageEvent<ArrayBuffer>) => {
+            if (message.data == null) return;
+            if (typeof message.data == "string")
+                console.log(message.data);
+
+            const d = new Int8Array(message.data);
+            if (d.length === 18 && d[0] === '!'.charCodeAt(0) && d[d.length - 1] === '$'.charCodeAt(0)) {
+                var dist = Buffer.from(d.slice(1, 5)).readFloatLE(0);
+                var temp = Buffer.from(d.slice(5, 9)).readFloatLE(0);
+                var roll = Buffer.from(d.slice(9, 13)).readFloatLE(0);
+                var pitch = Buffer.from(d.slice(13, 17)).readFloatLE(0);
                 console.log(dist, temp, roll, pitch);
                 this.emitTelemetry({ dist, temp, roll, pitch })
             }
             else {
                 this.pktnum++;
-                var frame = new Uint8Array(evt.data);
+                var frame = new Uint8Array(message.data);
                 this.framesList.push(frame);
             }
         };
