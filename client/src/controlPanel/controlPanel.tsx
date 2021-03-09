@@ -25,9 +25,9 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.state = {
             telemetry: null,
             currentSpeed: 100,
-            gunLever: 0,
-            ledBrightness: 150,
-            led2Brightness: 150,
+            gunLever: 180,
+            ledBrightness: 0,
+            led2Brightness: 0,
             settingsShowed: false,
         };
         this.rover = null;
@@ -124,7 +124,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                     style={{ backgroundColor: "#36474f", position: "absolute", zIndex: -1 }}
                     className="vw-100 vh-100"
                 />
-                <div className="d-flex justify-content-center align-items-center" >
+                <div className="d-flex justify-content-center align-items-center">
                     <TelemetryWidget
                         icon="fas fa-thermometer-half"
                         value={this.state.telemetry && this.state.telemetry.temp.toFixed(2) || "-"}
@@ -143,7 +143,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                     />
                 </div>
                 <div className="d-flex flex-column justify-content-center">
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
                             <DirectionPanel
                                 onForward={this.forward}
@@ -154,38 +154,46 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             />
                         </div>
                         {settingsShowed && <div className="d-flex justify-content-between text-white">
-                            <RangeInput
-                                label="Speed"
-                                initialValue={currentSpeed}
-                                min={100}
-                                max={250}
-                                step={10}
-                                onChange={this.onChangeSpeed}
-                            />
-                            <RangeInput
-                                label="Gun Lever"
-                                initialValue={gunLever}
-                                min={0}
-                                max={180}
-                                step={20}
-                                onChange={this.onChangeGunLever}
-                            />
-                            <RangeInput
-                                label="Led 1"
-                                initialValue={ledBrightness}
-                                min={50}
-                                max={255}
-                                step={10}
-                                onChange={this.led}
-                            />
-                            <RangeInput
-                                label="Led 2"
-                                initialValue={led2Brightness}
-                                min={50}
-                                max={255}
-                                step={10}
-                                onChange={this.led2}
-                            />
+                            <div className="m-2">
+                                <RangeInput
+                                    label="Speed"
+                                    initialValue={currentSpeed}
+                                    min={100}
+                                    max={250}
+                                    step={10}
+                                    onChange={this.onChangeSpeed}
+                                />
+                            </div>
+                            <div className="m-2">
+                                <RangeInput
+                                    label="Gun Lever"
+                                    initialValue={gunLever}
+                                    min={60}
+                                    max={180}
+                                    step={10}
+                                    onChange={this.onChangeGunLever}
+                                />
+                            </div>
+                            <div className="m-2">
+                                <RangeInput
+                                    label="Led 1"
+                                    initialValue={ledBrightness}
+                                    min={50}
+                                    max={255}
+                                    step={10}
+                                    onChange={this.led}
+                                />
+                            </div>
+                            <div className="m-2">
+                                <RangeInput
+                                    label="Led 2"
+                                    initialValue={led2Brightness}
+                                    min={50}
+                                    max={255}
+                                    step={10}
+                                    onChange={this.led2}
+                                />
+                            </div>
                         </div>}
                         <div className="d-flex flex-column">
                             <button

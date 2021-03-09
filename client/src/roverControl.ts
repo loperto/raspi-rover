@@ -65,7 +65,6 @@ export default class WebPlayer {
     }
 
     emitTelemetry = (cmd: ITelemetry) => {
-        console.log("Incoming request", cmd);
         this.Messages.emit(cmd);
     }
 
@@ -96,7 +95,6 @@ export default class WebPlayer {
                 var temp = Buffer.from(d.slice(5, 9)).readFloatLE(0);
                 var roll = Buffer.from(d.slice(9, 13)).readFloatLE(0);
                 var pitch = Buffer.from(d.slice(13, 17)).readFloatLE(0);
-                console.log(dist, temp, roll, pitch);
                 this.emitTelemetry({ dist, temp, roll, pitch })
             }
             else {

@@ -115,8 +115,7 @@ class Server {
     onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
-
-
+        
         client.on("message", (command) => {
             this.sendCommand(command);
         });
