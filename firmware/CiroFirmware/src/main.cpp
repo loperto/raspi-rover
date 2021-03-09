@@ -129,7 +129,7 @@ void changeMotorSpeed(uint8_t speed)
 
 void setup()
 {
-  Serial1.begin(115200);
+  Serial.begin(115200);
   pinMode(CAM_LED_PIN, OUTPUT);
   pinMode(OPT_LED_PIN, OUTPUT);
   pinMode(PING_LED_PIN, OUTPUT);
@@ -140,7 +140,8 @@ void setup()
 
   Wire.begin();
   mpu6050.begin();
-
+  mpu6050.calcGyroOffsets();
+  
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(50);
@@ -222,30 +223,23 @@ void sendTelemetry()
   long distance = sonar.ping_cm();
   mpu6050.update();
   float temp = mpu6050.getTemp();
-  float angleX = mpu6050.getAccAngleX();
-  float angleY = mpu6050.getAccAngleY();
+  float angleX = mpu6050.getAngleX();
+  float angleY = mpu6050.getAngleY();
 
-  Serial.print("Ping: ");
-  Serial.println(distance);
   uint8_t distanceBytes[4];
   float2Bytes(distanceBytes, distance);
 
-  Serial.print("Temp: ");
-  Serial.println(temp);
   uint8_t tempBytes[4];
   float2Bytes(tempBytes, temp);
 
-  Serial.print("angleX: ");
-  Serial.println(angleX);
   uint8_t angleXBytes[4];
   float2Bytes(angleXBytes, angleX);
 
-  Serial.print("angleY: ");
-  Serial.println(angleY);
   uint8_t angleYBytes[4];
   float2Bytes(angleYBytes, angleY);
 
   uint8_t allBytes[] = {
+      '!',
       distanceBytes[0],
       distanceBytes[1],
       distanceBytes[2],
@@ -262,19 +256,19 @@ void sendTelemetry()
       angleYBytes[1],
       angleYBytes[2],
       angleYBytes[3],
-      '\0',
-  };
+      '$',
+      '\r',
+      '\n'};
 
-  // Serial.write(allBytes, sizeof(allBytes));
-  // Serial1.write(allBytes, sizeof(allBytes));
+  Serial.write(allBytes, sizeof(allBytes));
 }
 
 void loop()
 {
-  if (Serial1.available())
+  if (Serial.available())
   {
     uint8_t command[3];
-    Serial1.readBytesUntil('\0', command, 3);
+    Serial.readBytesUntil('\0', command, 3);
     uint8_t test = command[0];
     uint8_t test2 = command[1] - 1;
     execCommand(test, test2);
@@ -290,59 +284,6 @@ void loop()
     {
       sendTelemetry();
       lastTelemetrySend = currentMillis;
-      // byte dataArray[17];
-      // byte *b = (byte *)&distance;
-      // for (size_t i = 0; i < 17; i++)
-      // {
-      //   dataArray[i] = ((uint8_t *)&distance)[0]
-      // }
-      // byte dataArray[4] = {
-      //     ((uint8_t *)&a)[0],
-      //     ((uint8_t *)&a)[1],
-      //     ((uint8_t *)&a)[2],
-      //     ((uint8_t *)&a)[3]};
     }
   }
-
-  // if (Serial.available())
-  // {
-  //   char command = Serial.read();
-  //   switch (command)
-  //   {
-  //   case 'f':
-  //     forward();
-  //     break;
-  //   case 'b':
-  //     forward();
-  //     break;
-  //   case 'l':
-  //     forward();
-  //     break;
-  //   case 'r':
-  //     forward();
-  //     break;
-  //   case 's':
-  //     stop();
-  //     break;
-  //   case 'g':
-  //     gunShot();
-  //     break;
-  //   case 'q':
-  //     toggleLeds(CAM_LED_PIN);
-  //     break;
-  //   case 'w':
-  //     toggleLeds(OPT_LED_PIN);
-  //     break;
-  //   case '1':
-  //     servoWrite(GUN_LEVER, 40);
-  //     break;
-  //   default:
-  //   case '2':
-  //     servoWrite(GUN_LEVER, 100);
-  //     break;
-  //   case '3':
-  //     servoWrite(GUN_LEVER, 160);
-  //     break;
-  //   }
-  // }
 }

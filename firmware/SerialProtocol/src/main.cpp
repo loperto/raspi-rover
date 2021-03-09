@@ -87,7 +87,7 @@ void float2Bytes(byte bytes_temp[4], float float_variable)
 void sendTelemetry()
 {
   long distance = 120.5;
-  float temp = 32.56;
+  float temp = 10;
   float angleX = 12.65;
   float angleY = 145.60;
 
@@ -128,11 +128,12 @@ void sendTelemetry()
       angleYBytes[1],
       angleYBytes[2],
       angleYBytes[3],
-      '\0',
+      '\r',
+      '\n'
   };
 
   Serial.write(allBytes, sizeof(allBytes));  
-  Serial.println();
+  // Serial.println();
 }
 
 void loop()
