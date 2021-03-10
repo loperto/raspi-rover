@@ -8,12 +8,23 @@ import * as YUVCanvas from "./broadway/YUVCanvas";
 import * as Size from "./broadway/Size";
 import { TEvent } from './Event';
 
-type CommandType = "start_camera" | "stop_camera" | "cameraY" | "cameraX" | "gunlever" | "speed" | "shot" | "stop" | "right" | "left" | "backward" | "forward" | "beep" | "led2" | "led";
-export interface ICommand {
-    type: CommandType;
-    value: number;
+export enum CommandType {
+    Forward = 1,
+    Backward = 2,
+    Left = 3,
+    Right = 4,
+    Stop = 5,
+    SetSpeed = 6,
+    CameraX = 7,
+    CameraY = 8,
+    Sound = 9,
+    Led1 = 10,
+    GunShot = 11,
+    GunLever = 12,
+    Led2 = 13,
+    StartCamera = 97,
+    StopCamera = 98,
 }
-
 export interface ITelemetry {
     dist: number,
     temp: number,
@@ -81,7 +92,7 @@ export default class WebPlayer {
             this.running = true;
             console.log("Connected to " + url);
             this.initCanvas(960, 540);
-            this.sendCommand("start_camera");
+            this.sendCommand(CommandType.StartCamera);
         };
 
         this.ws.onmessage = (message: MessageEvent<ArrayBuffer>) => {
@@ -113,16 +124,20 @@ export default class WebPlayer {
 
     disconnect = () => {
         this.running = false;
-        this.sendCommand("stop_camera");
+        this.sendCommand(CommandType.StopCamera);
         clearInterval(this.refreshInterval!);
     }
 
+
+
     sendCommand = (type: CommandType, value?: number) => {
         if (this.running) {
-            const commandString = JSON.stringify({ type, value: value ?? 0 });
-            console.log("sended command: ", commandString)
-            this.ws?.send(commandString);
+            console.log("sended command: ", JSON.stringify({ type: CommandType[type], value: value ?? 0 }))
+            const v = value == null || isNaN(value) ? 1 : Math.max(value, 1);
+            var buffer = Int8Array.from([type, v, '\0'.charCodeAt(0)]);
+            this.ws?.send(buffer);
         }
     }
 
 }
+

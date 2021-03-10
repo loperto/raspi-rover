@@ -2,7 +2,7 @@ import * as React from "react";
 import "./controlPanel.css";
 import DirectionPanel from "./directionPanel";
 import InclinationMonitor from "./inclinationMonitor";
-import RoverControl, { ITelemetry } from "../roverControl";
+import RoverControl, { CommandType, ITelemetry } from "../roverControl";
 import Joystick from './joystick';
 import DirectionJoystick from './directionJoystick';
 import RangeInput from "../common/rangeInput/rangeInput";
@@ -63,55 +63,55 @@ export default class ControlPanel extends React.Component<{}, IState> {
 
     led = (ledBrightness: number) => {
         this.setState({ ledBrightness });
-        this.rover?.sendCommand("led", ledBrightness);
+        this.rover?.sendCommand(CommandType.Led1, ledBrightness);
     }
 
     led2 = (led2Brightness: number) => {
         this.setState({ led2Brightness });
-        this.rover?.sendCommand("led2", led2Brightness);
+        this.rover?.sendCommand(CommandType.Led2, led2Brightness);
     }
 
     beep = () => {
-        this.rover?.sendCommand("beep", 255);
+        this.rover?.sendCommand(CommandType.Sound, 255);
     }
 
     forward = () => {
-        this.rover?.sendCommand("forward");
+        this.rover?.sendCommand(CommandType.Forward);
     }
 
     backward = () => {
-        this.rover?.sendCommand("backward");
+        this.rover?.sendCommand(CommandType.Backward);
     }
 
     left = () => {
-        this.rover?.sendCommand("left");
+        this.rover?.sendCommand(CommandType.Left);
     }
 
     right = () => {
-        this.rover?.sendCommand("right");
+        this.rover?.sendCommand(CommandType.Right);
     }
 
     stop = () => {
-        this.rover?.sendCommand("stop");
+        this.rover?.sendCommand(CommandType.Stop);
     }
 
     shot = () => {
-        this.rover?.sendCommand("shot");
+        this.rover?.sendCommand(CommandType.GunShot);
     }
 
     onChangeSpeed = (speed: number) => {
-        this.rover?.sendCommand("speed", speed);
+        this.rover?.sendCommand(CommandType.SetSpeed, speed);
         this.setState({ currentSpeed: speed });
     }
 
     onChangeGunLever = (lever: number) => {
-        this.rover?.sendCommand("gunlever", lever);
+        this.rover?.sendCommand(CommandType.GunLever, lever);
         this.setState({ gunLever: lever });
     }
 
     onChangeCamera = (x: number, y: number) => {
-        this.rover?.sendCommand("cameraX", x);
-        this.rover?.sendCommand("cameraY", y)
+        this.rover?.sendCommand(CommandType.CameraX, x);
+        this.rover?.sendCommand(CommandType.CameraY, y)
     }
 
     render() {

@@ -40,68 +40,26 @@ class Server {
 
     onSerialReady() {
         console.log("serial opened");
-        const pingCommand = "{\"type\":\"ping\",\"value\":0}";
+        const pingCommand = [99, 1, '\0'];
         this.sendCommand(pingCommand);
         setInterval(() => this.sendCommand(pingCommand), 9000);
     }
 
-    sendCommand(jsonCommand) {
-        console.log("message:", jsonCommand);
-        const command = JSON.parse(jsonCommand);
-        let commandId = null;
-        switch (command.type) {
-            case "start_camera":
+    sendCommand(commandBuffer) {
+        console.log("message:", commandBuffer);
+        const commandId = commandBuffer[0];
+        switch (commandId) {
+            case 97:
                 this.streamer.start_stream();
                 break;
-            case "stop_camera":
+            case 98:
                 this.streamer.stop_stream();
                 break;
-            case "forward":
-                commandId = 1;
+            default:
+                if (this.serial != null) {
+                    this.serial.write(commandBuffer);
+                }
                 break;
-            case "backward":
-                commandId = 2;
-                break;
-            case "left":
-                commandId = 3;
-                break;
-            case "right":
-                commandId = 4;
-                break;
-            case "stop":
-                commandId = 5;
-                break;
-            case "speed":
-                commandId = 6;
-                break;
-            case "cameraX":
-                commandId = 7;
-                break;
-            case "cameraY":
-                commandId = 8;
-                break;
-            case "beep":
-                commandId = 9;
-                break;
-            case "led":
-                commandId = 10;
-                break;
-            case "shot":
-                commandId = 11;
-                break;
-            case "gunlever":
-                commandId = 12;
-                break;
-            case "led2":
-                commandId = 13;
-                break;
-            case "ping":
-                commandId = 99;
-                break;
-        }
-        if (this.serial != null && commandId != null) {
-            const value = isNaN(command.value) ? 1 : Math.max(command.value, 1);
-            this.serial.write([commandId, value, '\0']);
         }
     }
 
@@ -115,7 +73,7 @@ class Server {
     onClientConnected(client, req) {
         const clientIp = req.connection.remoteAddress;
         console.log(`New client connected. Ip: ${clientIp}`);
-        
+
         client.on("message", (command) => {
             this.sendCommand(command);
         });
