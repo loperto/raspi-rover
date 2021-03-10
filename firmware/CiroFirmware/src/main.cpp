@@ -121,10 +121,11 @@ void toggleLeds(uint8_t ledPin, uint8_t pwmValue)
     analogWrite(ledPin, pwmValue);
 }
 
-void changeMotorSpeed(uint8_t speed)
+void changeMotorSpeed(uint8_t s)
 {
-  motorLeft.setSpeed(speed);
-  motorRight.setSpeed(speed);
+  speed = s;
+  motorLeft.setSpeed(s);
+  motorRight.setSpeed(s);
 }
 
 void setup()
@@ -141,7 +142,7 @@ void setup()
   Wire.begin();
   mpu6050.begin();
   mpu6050.calcGyroOffsets();
-  
+
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(50);
