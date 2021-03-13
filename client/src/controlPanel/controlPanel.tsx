@@ -169,7 +169,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     label="Gun Lever"
                                     initialValue={gunLever}
                                     min={60}
-                                    max={180}
+                                    max={140}
                                     step={10}
                                     onChange={this.onChangeGunLever}
                                 />
