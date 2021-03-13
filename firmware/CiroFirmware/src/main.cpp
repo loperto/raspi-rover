@@ -10,7 +10,7 @@ MPU6050 mpu6050(Wire);
 
 unsigned long lastPingReceived = 0;
 const unsigned int pingTimeout = 10000;
-const uint8_t PING_LED_PIN = 11;
+const uint8_t PING_LED_PIN = PIN_A2;
 
 const uint8_t CAM_LED_PIN = 13;
 const uint8_t OPT_LED_PIN = 10;
