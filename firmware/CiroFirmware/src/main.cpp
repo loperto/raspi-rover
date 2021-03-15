@@ -3,7 +3,7 @@
 #include <L298N.h>
 #include <NewPing.h>
 #include <MPU6050_tockn.h>
-
+#include <TimerFreeTone.h>
 unsigned long lastTelemetrySend = 0;
 const uint16_t telemetryFrequency = 500;
 MPU6050 mpu6050(Wire);
@@ -11,6 +11,9 @@ MPU6050 mpu6050(Wire);
 unsigned long lastPingReceived = 0;
 const unsigned int pingTimeout = 10000;
 const uint8_t PING_LED_PIN = PIN_A2;
+const uint8_t COMMNAD_LED_PIN = PIN_A3;
+
+const uint8_t BUZZER_PIN = 9;
 
 const uint8_t CAM_LED_PIN = 13;
 const uint8_t OPT_LED_PIN = 10;
@@ -25,8 +28,8 @@ const uint8_t MOTOR_LEFT_2 = 12;
 uint8_t speed = 150;
 
 //Ultrasonic Sensor HC-SR04
-const uint8_t TRIGGER_PIN = PIN_A1; // Arduino pin tied to trigger pin on the ultrasonic sensor.
-const uint8_t ECHO_PIN = PIN_A0;    // Arduino pin tied to echo pin on the ultrasonic sensor.
+const uint8_t TRIGGER_PIN = PIN_A5; // Arduino pin tied to trigger pin on the ultrasonic sensor.
+const uint8_t ECHO_PIN = PIN_A4;    // Arduino pin tied to echo pin on the ultrasonic sensor.
 const uint8_t MAX_DISTANCE = 200;   // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
@@ -128,12 +131,19 @@ void changeMotorSpeed(uint8_t s)
   motorRight.setSpeed(s);
 }
 
+void beep(uint8_t freq)
+{
+  TimerFreeTone(BUZZER_PIN, freq, 500);
+  delay(500);
+}
+
 void setup()
 {
   Serial.begin(115200);
   pinMode(CAM_LED_PIN, OUTPUT);
   pinMode(OPT_LED_PIN, OUTPUT);
   pinMode(PING_LED_PIN, OUTPUT);
+  pinMode(COMMNAD_LED_PIN, OUTPUT);
   motorLeft.stop();
   motorRight.stop();
   motorLeft.setSpeed(speed);
@@ -152,7 +162,7 @@ void setup()
 
 void execCommand(uint8_t type, uint8_t value)
 {
-  Serial.println("command");
+  digitalWrite(COMMNAD_LED_PIN, HIGH);
   switch (type)
   {
   case 1:
@@ -180,7 +190,7 @@ void execCommand(uint8_t type, uint8_t value)
     servoWrite(CAM_Y_CH, value);
     break;
   case 9:
-    // beep(value);
+    beep(value);
     break;
   case 10:
     toggleLeds(CAM_LED_PIN, value);
@@ -206,6 +216,8 @@ void execCommand(uint8_t type, uint8_t value)
     Serial.println(" command not found!");
     break;
   }
+
+  digitalWrite(COMMNAD_LED_PIN, LOW);
 }
 
 void float2Bytes(byte bytes_temp[4], float float_variable)
