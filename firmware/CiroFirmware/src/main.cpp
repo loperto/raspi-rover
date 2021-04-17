@@ -162,7 +162,7 @@ void setup()
 
 void execCommand(uint8_t type, uint8_t value)
 {
-  digitalWrite(COMMNAD_LED_PIN, HIGH);
+  // digitalWrite(COMMNAD_LED_PIN, HIGH);
   switch (type)
   {
   case 1:
@@ -217,7 +217,7 @@ void execCommand(uint8_t type, uint8_t value)
     break;
   }
 
-  digitalWrite(COMMNAD_LED_PIN, LOW);
+  // digitalWrite(COMMNAD_LED_PIN, LOW);
 }
 
 void float2Bytes(byte bytes_temp[4], float float_variable)
