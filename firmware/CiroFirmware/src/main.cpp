@@ -139,7 +139,7 @@ void beep(uint8_t freq)
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial1.begin(115200);
   pinMode(CAM_LED_PIN, OUTPUT);
   pinMode(OPT_LED_PIN, OUTPUT);
   pinMode(PING_LED_PIN, OUTPUT);
@@ -205,15 +205,15 @@ void execCommand(uint8_t type, uint8_t value)
     toggleLeds(OPT_LED_PIN, value);
     break;
   case 99:
-    Serial.println("ping");
+    Serial1.println("ping");
     lastPingReceived = millis();
     digitalWrite(PING_LED_PIN, HIGH);
     break;
   default:
-    Serial.print(type);
-    Serial.print(" ");
-    Serial.print(value);
-    Serial.println(" command not found!");
+    Serial1.print(type);
+    Serial1.print(" ");
+    Serial1.print(value);
+    Serial1.println(" command not found!");
     break;
   }
 
@@ -273,15 +273,15 @@ void sendTelemetry()
       '\r',
       '\n'};
 
-  Serial.write(allBytes, sizeof(allBytes));
+  Serial1.write(allBytes, sizeof(allBytes));
 }
 
 void loop()
 {
-  if (Serial.available())
+  if (Serial1.available())
   {
     uint8_t command[3];
-    Serial.readBytesUntil('\0', command, 3);
+    Serial1.readBytesUntil('\0', command, 3);
     uint8_t test = command[0];
     uint8_t test2 = command[1] - 1;
     execCommand(test, test2);
