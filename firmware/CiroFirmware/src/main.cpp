@@ -10,8 +10,8 @@ MPU6050 mpu6050(Wire);
 
 unsigned long lastPingReceived = 0;
 const unsigned int pingTimeout = 10000;
-const uint8_t PING_LED_PIN = PIN_A2;
-const uint8_t COMMNAD_LED_PIN = PIN_A3;
+const uint8_t PING_LED_PIN = PIN_A3;
+const uint8_t COMMNAD_LED_PIN = PIN_A2;
 
 const uint8_t BUZZER_PIN = 9;
 
@@ -144,6 +144,7 @@ void setup()
   pinMode(OPT_LED_PIN, OUTPUT);
   pinMode(PING_LED_PIN, OUTPUT);
   pinMode(COMMNAD_LED_PIN, OUTPUT);
+  digitalWrite(PING_LED_PIN, HIGH);
   motorLeft.stop();
   motorRight.stop();
   motorLeft.setSpeed(speed);
@@ -158,6 +159,7 @@ void setup()
   pwm.setPWMFreq(50);
   delay(10);
   initMotors();
+  digitalWrite(PING_LED_PIN, LOW);
 }
 
 void execCommand(uint8_t type, uint8_t value)
