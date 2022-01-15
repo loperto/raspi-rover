@@ -27,6 +27,9 @@ const uint8_t MOTOR_LEFT_1 = 8;
 const uint8_t MOTOR_LEFT_2 = 12;
 uint8_t speed = 150;
 
+float initial_angle_x = 0;
+float initial_angle_y = 0;
+
 //Ultrasonic Sensor HC-SR04
 const uint8_t TRIGGER_PIN = PIN_A5; // Arduino pin tied to trigger pin on the ultrasonic sensor.
 const uint8_t ECHO_PIN = PIN_A4;    // Arduino pin tied to echo pin on the ultrasonic sensor.
@@ -153,6 +156,8 @@ void setup()
   Wire.begin();
   mpu6050.begin();
   mpu6050.calcGyroOffsets();
+  initial_angle_x = mpu6050.getAngleX();
+  initial_angle_y = mpu6050.getAngleY();
 
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -238,8 +243,8 @@ void sendTelemetry()
   long distance = sonar.ping_cm();
   mpu6050.update();
   float temp = mpu6050.getTemp();
-  float angleX = mpu6050.getAngleX();
-  float angleY = mpu6050.getAngleY();
+  float angleX = mpu6050.getAngleX() - initial_angle_x;
+  float angleY = mpu6050.getAngleY() - initial_angle_y;
 
   uint8_t distanceBytes[4];
   float2Bytes(distanceBytes, distance);
