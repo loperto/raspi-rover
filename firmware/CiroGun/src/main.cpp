@@ -48,9 +48,9 @@ const uint8_t GUN_LOADER = 3;
 
 void initMotors()
 {
-  // pwm.writeMicroseconds(4, 2000);
-  // pwm.writeMicroseconds(5, 2000);
-  // delay(5000);
+  pwm.writeMicroseconds(4, 2000);
+  pwm.writeMicroseconds(5, 2000);
+  delay(5000);
   pwm.writeMicroseconds(4, 1000);
   pwm.writeMicroseconds(5, 1000);
   delay(2000);
@@ -60,7 +60,8 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("8 channel Servo test!");
-
+  //taratura motore brushless: Avviare questo codice, scollegare le 2 esc. Mandare via seriale h (livello alto), collegare le esc e attende il beep. Attendere 2 secondi e mandare il low
+  //https://howtomechatronics.com/tutorials/arduino/arduino-brushless-motor-control-tutorial-esc-bldc/
   pwm.begin();
   /*
    * In theory the internal oscillator (clock) is 25MHz but it really isn't
@@ -81,7 +82,7 @@ void setup()
   pwm.setOscillatorFrequency(27000000);
   pwm.setPWMFreq(SERVO_FREQ); // Analog servos run at ~50 Hz updates
   delay(10);
-  initMotors();
+  // initMotors();
 }
 
 void servoWrite(uint8_t channel, uint8_t degrees)
@@ -115,6 +116,14 @@ void loop()
       break;
     case 's':
       gunShot();
+      break;
+    case 'h':
+      pwm.writeMicroseconds(4, 2000);
+      pwm.writeMicroseconds(5, 2000);
+      break;
+    case 'l':
+      pwm.writeMicroseconds(4, 1000);
+      pwm.writeMicroseconds(5, 1000);
       break;
     case '1':
       servoWrite(GUN_LEVER, 40);
