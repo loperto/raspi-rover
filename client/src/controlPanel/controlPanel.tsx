@@ -1,12 +1,13 @@
 import * as React from "react";
 import "./controlPanel.css";
-import DirectionPanel from "./directionPanel";
-import InclinationMonitor from "./inclinationMonitor";
-import RoverControl, { CommandType, ITelemetry } from "../roverControl";
-import Joystick from './joystick';
-import DirectionJoystick from './directionJoystick';
-import RangeInput from "../common/rangeInput/rangeInput";
-import { TelemetryWidget } from "./telemetryWidget";
+import DirectionPanel from "./DirectionPanel";
+import InclinationMonitor from "./InclinationMonitor";
+import RoverControl, { CommandType, ITelemetry } from "../RoverControl";
+import Joystick from '../joystick/Joystick';
+import DirectionJoystick from './DirectionJoystick';
+import RangeInput from "../rangeInput/rangeInput";
+import { TelemetryWidget } from "./TelemetryWidget";
+import CameraJoystick from "./CameraJoystick";
 
 interface IState {
     currentSpeed: number;
@@ -41,8 +42,9 @@ export default class ControlPanel extends React.Component<{}, IState> {
     componentDidMount() {
         this.rover = new RoverControl(this.canvas!, "webgl");
         // if (process.env.NODE_ENV == "production") {
-        const uri = `ws://${window.location.hostname}:${window.location.port}`;
+        //const uri = `ws://${window.location.hostname}:${window.location.port}`;
         // const uri = `ws://localhost:8080`;
+        const uri = `ws://pi1:8080`;
         this.rover.connect(uri, this.onCanvasReady);
         this.rover.Messages.register(this.messageListener);
         // }
@@ -242,15 +244,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         onRight={this.right}
                         onStop={this.stop}
                     />
-                    <Joystick
-                        xValues={{ min: 0, max: 180 }}
-                        yValues={{ min: 0, max: 100 }}
-                        initialX={90}
-                        initialY={0}
-                        onChange={this.onChangeCamera}
-                        color="#ff3333"
-                        icon="fas fa-video"
-                        stacked
+                    <CameraJoystick
+                        onMove={this.onChangeCamera}
                     />
                 </div>
             </div>

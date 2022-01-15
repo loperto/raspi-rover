@@ -1,10 +1,10 @@
 import React from 'react';
-import { IProps, DirectionButton } from './directionPanel';
-import Joystick from './joystick';
+import { IProps, DirectionType } from './DirectionPanel';
+import Joystick from '../joystick/Joystick';
 
 
 interface IState {
-    currentStatus: DirectionButton | null;
+    currentStatus: DirectionType | null;
 }
 
 export default class DirectionJoystick extends React.Component<IProps, IState>{
@@ -17,23 +17,23 @@ export default class DirectionJoystick extends React.Component<IProps, IState>{
 
     onChangeDirection = (x: number, y: number) => {
         // console.log("direction joystick", "X:", x, "Y:", y);
-        if (x >= 100 && this.state.currentStatus != DirectionButton.Right) {
-            this.setState({ currentStatus: DirectionButton.Right });
+        if (x >= 100 && this.state.currentStatus != DirectionType.Right) {
+            this.setState({ currentStatus: DirectionType.Right });
             console.log("onRight");
             this.props.onRight();
         }
-        else if (x <= 0 && this.state.currentStatus != DirectionButton.Left) {
-            this.setState({ currentStatus: DirectionButton.Left });
+        else if (x <= 0 && this.state.currentStatus != DirectionType.Left) {
+            this.setState({ currentStatus: DirectionType.Left });
             console.log("onLeft");
             this.props.onLeft();
         }
-        else if (y >= 100 && this.state.currentStatus != DirectionButton.Up) {
-            this.setState({ currentStatus: DirectionButton.Up });
+        else if (y >= 100 && this.state.currentStatus != DirectionType.Up) {
+            this.setState({ currentStatus: DirectionType.Up });
             console.log("onForward");
             this.props.onForward();
         }
-        else if (y <= 0 && this.state.currentStatus != DirectionButton.Down) {
-            this.setState({ currentStatus: DirectionButton.Down });
+        else if (y <= 0 && this.state.currentStatus != DirectionType.Down) {
+            this.setState({ currentStatus: DirectionType.Down });
             console.log("onBackward");
             this.props.onBackward();
         }

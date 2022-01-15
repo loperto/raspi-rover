@@ -6,7 +6,7 @@ import * as YUVWebGLCanvas from "./broadway/YUVWebGLCanvas";
 import * as YUVCanvas from "./broadway/YUVCanvas";
 // @ts-ignore
 import * as Size from "./broadway/Size";
-import { TEvent } from './Event';
+import { TEvent } from "./Utilities";
 
 export enum CommandType {
     Forward = 1,

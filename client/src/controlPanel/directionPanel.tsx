@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 export interface IProps {
     onStop: () => void;
@@ -8,7 +8,7 @@ export interface IProps {
     onRight: () => void;
 }
 
-export enum DirectionButton {
+export enum DirectionType {
     Up,
     Down,
     Left,
@@ -16,7 +16,7 @@ export enum DirectionButton {
 }
 
 interface State {
-    currentButtonPressed: DirectionButton | null;
+    currentButtonPressed: DirectionType | null;
 }
 
 export default class DirectionPanel extends React.Component<IProps, State>{
@@ -38,34 +38,34 @@ export default class DirectionPanel extends React.Component<IProps, State>{
     }
 
     onKeyDown = (e: KeyboardEvent) => {
-        let buttonType: DirectionButton | null = null;
+        let buttonType: DirectionType | null = null;
         switch (e.key) {
             case "ArrowUp":
-                buttonType = DirectionButton.Up;
+                buttonType = DirectionType.Up;
                 break;
             case "ArrowDown":
-                buttonType = DirectionButton.Down;
+                buttonType = DirectionType.Down;
                 break;
             case "ArrowLeft":
-                buttonType = DirectionButton.Left;
+                buttonType = DirectionType.Left;
                 break;
             case "ArrowRight":
-                buttonType = DirectionButton.Right;
+                buttonType = DirectionType.Right;
                 break;
         }
         if (buttonType != null && buttonType !== this.state.currentButtonPressed) {
             this.setState({ currentButtonPressed: buttonType });
             switch (buttonType) {
-                case DirectionButton.Up:
+                case DirectionType.Up:
                     this.props.onForward();
                     break;
-                case DirectionButton.Down:
+                case DirectionType.Down:
                     this.props.onBackward();
                     break;
-                case DirectionButton.Left:
+                case DirectionType.Left:
                     this.props.onLeft();
                     break;
-                case DirectionButton.Right:
+                case DirectionType.Right:
                     this.props.onRight();
                     break;
             }
@@ -90,7 +90,7 @@ export default class DirectionPanel extends React.Component<IProps, State>{
         }
     }
 
-    getButtonClass = (type: DirectionButton) => {
+    getButtonClass = (type: DirectionType) => {
         if (this.state.currentButtonPressed === type)
             return "btn btn-cmd btn-primary";
         else return "btn btn-cmd btn-outline-primary";
@@ -102,7 +102,7 @@ export default class DirectionPanel extends React.Component<IProps, State>{
                 <div>
                     <button
                         type="button"
-                        className={this.getButtonClass(DirectionButton.Up)}
+                        className={this.getButtonClass(DirectionType.Up)}
                         onMouseDown={this.props.onForward}
                         onMouseUp={this.props.onStop}>
                         <i className="fa fa-arrow-up" />
@@ -111,7 +111,7 @@ export default class DirectionPanel extends React.Component<IProps, State>{
                 <div>
                     <button
                         type="button"
-                        className={this.getButtonClass(DirectionButton.Down)}
+                        className={this.getButtonClass(DirectionType.Down)}
                         onMouseDown={this.props.onBackward}
                         onMouseUp={this.props.onStop}>
                         <i className="fa fa-arrow-down" />
@@ -120,7 +120,7 @@ export default class DirectionPanel extends React.Component<IProps, State>{
                 <div>
                     <button
                         type="button"
-                        className={this.getButtonClass(DirectionButton.Left)}
+                        className={this.getButtonClass(DirectionType.Left)}
                         onMouseDown={this.props.onLeft}
                         onMouseUp={this.props.onStop}>
                         <i className="fa fa-arrow-left" />
@@ -129,7 +129,7 @@ export default class DirectionPanel extends React.Component<IProps, State>{
                 <div>
                     <button
                         type="button"
-                        className={this.getButtonClass(DirectionButton.Right)}
+                        className={this.getButtonClass(DirectionType.Right)}
                         onMouseDown={this.props.onRight}
                         onMouseUp={this.props.onStop}>
                         <i className="fa fa-arrow-right" />

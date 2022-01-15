@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import { map } from '../Utilities';
 
 interface IProps {
     initialX: number;
@@ -55,13 +56,9 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     getInitialPosition(props: IProps) {
-        const initX = this.map(props.initialX, props.xValues.min, props.xValues.max, this.offsets.minX, this.offsets.maxX);
-        const initY = this.map(props.initialY, props.yValues.min, props.yValues.max, this.offsets.minY, this.offsets.maxY);
+        const initX = map(props.initialX, props.xValues.min, props.xValues.max, this.offsets.minX, this.offsets.maxX);
+        const initY = map(props.initialY, props.yValues.min, props.yValues.max, this.offsets.minY, this.offsets.maxY);
         return { x: initX, y: initY };
-    }
-
-    map(x: number, in_min: number, in_max: number, out_min: number, out_max: number) {
-        return Math.round((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
     }
 
     componentDidMount() {
@@ -124,7 +121,7 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     getMappedValue(value: number, offMin: number, offMax: number, min: number, max: number, stacked?: boolean) {
-        let mapped = this.map(value, offMin, offMax, min, max);
+        let mapped = map(value, offMin, offMax, min, max);
         if (stacked) {
             if (mapped < min)
                 mapped = min;
