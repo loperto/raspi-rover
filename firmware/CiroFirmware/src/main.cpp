@@ -79,16 +79,16 @@ void left()
 {
   motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
-  motorLeft.forward();
-  motorRight.backward();
+  motorLeft.backward();
+  motorRight.forward();
 }
 
 void right()
 {
   motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
-  motorLeft.backward();
-  motorRight.forward();
+  motorLeft.forward();
+  motorRight.backward();
 }
 
 void stop()
