@@ -236,7 +236,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-between mr-5 ml-5 p-0">
+                <div className="d-flex justify-content-between me-5 ms-5 p-0">
                     <DirectionJoystick
                         onForward={this.forward}
                         onBackward={this.backward}
