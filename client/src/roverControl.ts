@@ -104,8 +104,8 @@ export default class WebPlayer {
             if (d.length === 18 && d[0] === '!'.charCodeAt(0) && d[d.length - 1] === '$'.charCodeAt(0)) {
                 var dist = Buffer.from(d.slice(1, 5)).readFloatLE(0);
                 var temp = Buffer.from(d.slice(5, 9)).readFloatLE(0);
-                var roll = Buffer.from(d.slice(9, 13)).readFloatLE(0);
-                var pitch = Buffer.from(d.slice(13, 17)).readFloatLE(0);
+                var pitch = Buffer.from(d.slice(9, 13)).readFloatLE(0);
+                var roll = Buffer.from(d.slice(13, 17)).readFloatLE(0);
                 this.emitTelemetry({ dist, temp, roll, pitch })
             }
             else {
