@@ -1,14 +1,15 @@
-const SerialPort = require("serialport")
-const Readline = require("@serialport/parser-readline");
-const Delimiter = require("@serialport/parser-delimiter")
+const { SerialPort } = require("serialport")
+const { Readline } = require("@serialport/parser-readline");
+const { DelimiterParser } = require("@serialport/parser-delimiter")
 class Serial {
     constructor(path, onMessage, options) {
         this.connected = false;
-        this.port = new SerialPort(path, {
+        this.port = new SerialPort({
+            path,
             baudRate: options && options.baudRate || 9600,
             autoOpen: true,
         });
-        this.parser = this.port.pipe(new Delimiter({ delimiter: "\r\n" }));
+        this.parser = this.port.pipe(new DelimiterParser({ delimiter: "\r\n" }));
         this.parser.on("data", (data) => {
             onMessage(data);
         });
