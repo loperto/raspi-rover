@@ -18,19 +18,16 @@ const uint8_t BUZZER_PIN = 9;
 const uint8_t CAM_LED_PIN = 13;
 const uint8_t OPT_LED_PIN = 10;
 
-const uint8_t MOTOR_RIGHT_E = 5; //pin for speed control en1
+const uint8_t MOTOR_RIGHT_E = 5; // pin for speed control en1
 const uint8_t MOTOR_RIGHT_1 = 4;
 const uint8_t MOTOR_RIGHT_2 = 7;
 
-const uint8_t MOTOR_LEFT_E = 6; //pin for speed control en2
+const uint8_t MOTOR_LEFT_E = 6; // pin for speed control en2
 const uint8_t MOTOR_LEFT_1 = 8;
 const uint8_t MOTOR_LEFT_2 = 12;
 uint8_t speed = 150;
 
-float initial_angle_x = 0;
-float initial_angle_y = 0;
-
-//Ultrasonic Sensor HC-SR04
+// Ultrasonic Sensor HC-SR04
 const uint8_t TRIGGER_PIN = PIN_A5; // Arduino pin tied to trigger pin on the ultrasonic sensor.
 const uint8_t ECHO_PIN = PIN_A4;    // Arduino pin tied to echo pin on the ultrasonic sensor.
 const uint8_t MAX_DISTANCE = 200;   // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
@@ -156,8 +153,6 @@ void setup()
   Wire.begin();
   mpu6050.begin();
   mpu6050.calcGyroOffsets();
-  initial_angle_x = mpu6050.getAngleX();
-  initial_angle_y = mpu6050.getAngleY();
 
   pwm.begin();
   pwm.setOscillatorFrequency(27000000);
@@ -243,8 +238,8 @@ void sendTelemetry()
   long distance = sonar.ping_cm();
   mpu6050.update();
   float temp = mpu6050.getTemp();
-  float angleX = mpu6050.getAngleX() - initial_angle_x;
-  float angleY = mpu6050.getAngleY() - initial_angle_y;
+  float angleX = mpu6050.getAngleX();
+  float angleY = mpu6050.getAngleY();
 
   uint8_t distanceBytes[4];
   float2Bytes(distanceBytes, distance);
