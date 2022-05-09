@@ -61,7 +61,19 @@ export default class Joystick extends React.Component<IProps, IState> {
         return { x: initX, y: initY };
     }
 
+    initializePosition = () => {
+        this.offsets = this.getJoystickOffsets(this.containerSize, this.joystickSize);
+        const initial = this.getInitialPosition(this.props);
+        this.containerInitialPos = this.joystickContainer?.getBoundingClientRect();
+        this.joystickInitialPos = this.joystick?.getBoundingClientRect();
+        this.setState({
+            marginLeft: initial.x,
+            marginTop: initial.y,
+        });
+    }
+
     componentDidMount() {
+        window.addEventListener("resize", this.initializePosition)
         this.containerInitialPos = this.joystickContainer?.getBoundingClientRect();
         this.joystickInitialPos = this.joystick?.getBoundingClientRect();
 
@@ -75,6 +87,7 @@ export default class Joystick extends React.Component<IProps, IState> {
     }
 
     componentWillUnmount() {
+        window.removeEventListener("resize", this.initializePosition)
         this.joystickContainer?.removeEventListener("mousedown", this.onMouseDown);
         this.joystickContainer?.removeEventListener("mouseup", this.onMouseUp);
         this.joystickContainer?.removeEventListener("mousemove", this.onMouseMove);
@@ -172,7 +185,7 @@ export default class Joystick extends React.Component<IProps, IState> {
                     width: this.containerSize,
                     borderRadius: "50%",
                     border: `${this.borderWidht}px solid ${color}`,
-                    margin: 30,
+
                 }}>
                 <div
                     ref={div => this.joystick = div!}
