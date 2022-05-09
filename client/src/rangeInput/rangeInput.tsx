@@ -25,7 +25,7 @@ export default class RangeInput extends React.Component<IProps, IState> {
     public render() {
         return (
             <div>
-                <label>{this.props.label}</label>
+                <label className="form-label">{this.props.label}</label>
                 <input
                     type="range"
                     className="slider"

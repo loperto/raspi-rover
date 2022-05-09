@@ -145,7 +145,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                     />
                 </div>
                 <div className="d-flex flex-column justify-content-center">
-                    <div className="d-flex justify-content-between align-items-center flex-wrap">
+                    <div className="d-flex justify-content-between align-items-center">
                         <div>
                             <DirectionPanel
                                 onForward={this.forward}
@@ -155,8 +155,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                 onStop={this.stop}
                             />
                         </div>
-                        {settingsShowed && <div className="d-flex justify-content-between text-white">
-                            <div className="m-2">
+                        {settingsShowed && <div className="row text-white">
+                            <div className="col-12 col-lg-3 d-flex justify-content-center">
                                 <RangeInput
                                     label="Speed"
                                     initialValue={currentSpeed}
@@ -166,7 +166,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.onChangeSpeed}
                                 />
                             </div>
-                            <div className="m-2">
+                            <div className="col-12 col-lg-3 d-flex justify-content-center">
                                 <RangeInput
                                     label="Gun Lever"
                                     initialValue={gunLever}
@@ -176,7 +176,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.onChangeGunLever}
                                 />
                             </div>
-                            <div className="m-2">
+                            <div className="col-12 col-lg-3 d-flex justify-content-center">
                                 <RangeInput
                                     label="Led 1"
                                     initialValue={ledBrightness}
@@ -186,7 +186,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.led}
                                 />
                             </div>
-                            <div className="m-2">
+                            <div className="col-12 col-lg-3 d-flex justify-content-center">
                                 <RangeInput
                                     label="Led 2"
                                     initialValue={led2Brightness}
@@ -236,7 +236,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                         </div>
                     </div>
                 </div>
-                <div className="d-flex justify-content-between me-5 ms-5 p-0">
+                <div className="d-flex justify-content-between p-3">
                     <DirectionJoystick
                         onForward={this.forward}
                         onBackward={this.backward}
