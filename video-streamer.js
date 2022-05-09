@@ -36,6 +36,7 @@ class VideoStreamer {
         if (this.running) {
             this.readStream.end();
             this.streamer.kill();
+            this.running = false;
         }
     }
 
