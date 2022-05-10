@@ -25,7 +25,7 @@ const uint8_t MOTOR_RIGHT_2 = 7;
 const uint8_t MOTOR_LEFT_E = 6; // pin for speed control en2
 const uint8_t MOTOR_LEFT_1 = 8;
 const uint8_t MOTOR_LEFT_2 = 12;
-uint8_t speed = 150;
+uint8_t speed = 100;
 
 // Ultrasonic Sensor HC-SR04
 const uint8_t TRIGGER_PIN = PIN_A5; // Arduino pin tied to trigger pin on the ultrasonic sensor.
