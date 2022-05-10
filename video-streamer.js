@@ -13,16 +13,16 @@ class VideoStreamer {
         this.ws = ws;
         this.options = options;
         this.running = false;
-        this.start_feed = this.start_stream.bind(this);
-        this.stop_feed = this.stop_stream.bind(this);
+        this.start_stream = this.start_stream.bind(this);
+        this.stop_stream = this.stop_stream.bind(this);
         this.broadcast = this.broadcast.bind(this);
     }
 
     start_stream() {
-        if (os.type() !== "Linux") {
-            console.log("video stream not available on windows");
-            return;
-        }
+        // if (os.type() !== "Linux") {
+        //     console.log("video stream not available on windows");
+        //     return;
+        // }
         if (this.running) {
             console.log("video stream already running!");
             return;
@@ -41,8 +41,14 @@ class VideoStreamer {
     }
 
     get_stream() {
-        this.running = true;
-        this.streamer = spawn('raspivid', ['-t', '0', '-o', '-', '-n', '-rot', '180', '-w', this.options.width, '-h', this.options.height, '-fps', this.options.fps, '-pf', 'baseline']);
+        this.running = true; 6
+        if (os.type() !== "Linux") {
+            this.streamer = spawn('ping', ['192.168.178.41', '-t']);
+        }
+        else {
+
+            this.streamer = spawn('raspivid', ['-t', '0', '-o', '-', '-n', '-rot', '180', '-w', this.options.width, '-h', this.options.height, '-fps', this.options.fps, '-pf', 'baseline']);
+        }
         this.streamer.on("exit", function (code) {
             if (code)
                 console.log(`Video streamer failure. Error code: ${code}`);
