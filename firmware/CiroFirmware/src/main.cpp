@@ -137,6 +137,62 @@ void beep(uint8_t freq)
   delay(500);
 }
 
+void float2Bytes(byte bytes_temp[4], float float_variable)
+{
+  union
+  {
+    float a;
+    unsigned char bytes[4];
+  } thing;
+  thing.a = float_variable;
+  memcpy(bytes_temp, thing.bytes, 4);
+}
+
+void sendTelemetry()
+{
+  long distance = sonar.ping_cm();
+  mpu6050.update();
+  float temp = mpu6050.getTemp();
+  float angleX = mpu6050.getAngleX();
+  float angleY = mpu6050.getAngleY();
+
+  uint8_t distanceBytes[4];
+  float2Bytes(distanceBytes, distance);
+
+  uint8_t tempBytes[4];
+  float2Bytes(tempBytes, temp);
+
+  uint8_t angleXBytes[4];
+  float2Bytes(angleXBytes, angleX);
+
+  uint8_t angleYBytes[4];
+  float2Bytes(angleYBytes, angleY);
+
+  uint8_t allBytes[] = {
+      '!',
+      distanceBytes[0],
+      distanceBytes[1],
+      distanceBytes[2],
+      distanceBytes[3],
+      tempBytes[0],
+      tempBytes[1],
+      tempBytes[2],
+      tempBytes[3],
+      angleXBytes[0],
+      angleXBytes[1],
+      angleXBytes[2],
+      angleXBytes[3],
+      angleYBytes[0],
+      angleYBytes[1],
+      angleYBytes[2],
+      angleYBytes[3],
+      '$',
+      '\r',
+      '\n'};
+
+  Serial1.write(allBytes, sizeof(allBytes));
+}
+
 void setup()
 {
   Serial1.begin(115200);
@@ -206,6 +262,9 @@ void execCommand(uint8_t type, uint8_t value)
   case 13:
     toggleLeds(OPT_LED_PIN, value);
     break;
+  case 96:
+    sendTelemetry();
+    break;
   case 99:
     Serial1.println("ping");
     lastPingReceived = millis();
@@ -220,62 +279,6 @@ void execCommand(uint8_t type, uint8_t value)
   }
 
   // digitalWrite(COMMNAD_LED_PIN, LOW);
-}
-
-void float2Bytes(byte bytes_temp[4], float float_variable)
-{
-  union
-  {
-    float a;
-    unsigned char bytes[4];
-  } thing;
-  thing.a = float_variable;
-  memcpy(bytes_temp, thing.bytes, 4);
-}
-
-void sendTelemetry()
-{
-  long distance = sonar.ping_cm();
-  mpu6050.update();
-  float temp = mpu6050.getTemp();
-  float angleX = mpu6050.getAngleX();
-  float angleY = mpu6050.getAngleY();
-
-  uint8_t distanceBytes[4];
-  float2Bytes(distanceBytes, distance);
-
-  uint8_t tempBytes[4];
-  float2Bytes(tempBytes, temp);
-
-  uint8_t angleXBytes[4];
-  float2Bytes(angleXBytes, angleX);
-
-  uint8_t angleYBytes[4];
-  float2Bytes(angleYBytes, angleY);
-
-  uint8_t allBytes[] = {
-      '!',
-      distanceBytes[0],
-      distanceBytes[1],
-      distanceBytes[2],
-      distanceBytes[3],
-      tempBytes[0],
-      tempBytes[1],
-      tempBytes[2],
-      tempBytes[3],
-      angleXBytes[0],
-      angleXBytes[1],
-      angleXBytes[2],
-      angleXBytes[3],
-      angleYBytes[0],
-      angleYBytes[1],
-      angleYBytes[2],
-      angleYBytes[3],
-      '$',
-      '\r',
-      '\n'};
-
-  Serial1.write(allBytes, sizeof(allBytes));
 }
 
 void loop()
@@ -294,11 +297,6 @@ void loop()
     if ((currentMillis - lastPingReceived) > pingTimeout)
     {
       digitalWrite(PING_LED_PIN, LOW);
-    }
-    if ((currentMillis - lastTelemetrySend) > telemetryFrequency)
-    {
-      sendTelemetry();
-      lastTelemetrySend = currentMillis;
     }
   }
 }

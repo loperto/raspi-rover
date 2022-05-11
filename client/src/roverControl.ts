@@ -22,6 +22,7 @@ export enum CommandType {
     GunShot = 11,
     GunLever = 12,
     Led2 = 13,
+    Telemetry = 96,
     StartCamera = 97,
     StopCamera = 98,
 }
@@ -42,6 +43,7 @@ export default class WebPlayer {
     framesList: Uint8Array[];
     refreshInterval: NodeJS.Timeout | null = null;
     Messages = new TEvent<ITelemetry>();
+    telemetryWatch: NodeJS.Timeout | null = null;
 
     constructor(canvas: HTMLCanvasElement, canvastype: string) {
         this.canvas = canvas;
@@ -75,7 +77,7 @@ export default class WebPlayer {
         this.avc.onPictureDecoded = canvas.decode;
     }
 
-    emitTelemetry = (cmd: ITelemetry) => {
+    receiveTelemetry = (cmd: ITelemetry) => {
         this.Messages.emit(cmd);
     }
 
@@ -93,6 +95,7 @@ export default class WebPlayer {
             console.log("Connected to " + url);
             this.initCanvas(960, 540);
             this.sendCommand(CommandType.StartCamera);
+            this.telemetryWatch = setInterval(() => this.sendCommand(CommandType.Telemetry), 500)
         };
 
         this.ws.onmessage = (message: MessageEvent<ArrayBuffer>) => {
@@ -106,7 +109,7 @@ export default class WebPlayer {
                 var temp = Buffer.from(d.slice(5, 9)).readFloatLE(0);
                 var pitch = Buffer.from(d.slice(9, 13)).readFloatLE(0);
                 var roll = Buffer.from(d.slice(13, 17)).readFloatLE(0);
-                this.emitTelemetry({ dist, temp, roll, pitch })
+                this.receiveTelemetry({ dist, temp, roll, pitch })
             }
             else {
                 this.pktnum++;
@@ -126,6 +129,8 @@ export default class WebPlayer {
         this.running = false;
         this.sendCommand(CommandType.StopCamera);
         clearInterval(this.refreshInterval!);
+        clearInterval(this.telemetryWatch!)
+
     }
 
 
