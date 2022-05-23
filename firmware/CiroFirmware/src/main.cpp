@@ -42,8 +42,9 @@ const uint16_t SERVOMIN = 150; // This is the 'minimum' pulse length count (out 
 const uint16_t SERVOMAX = 600; // This is the 'maximum' pulse length count (out of 4096)
 #define USMIN 600              // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX 2400             // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
-const uint16_t MIN_THROTTLE = 1000;
-const uint16_t MAX_THROTTLE = 2000;
+const uint16_t GUNPOWER_MIN = 1000;
+const uint16_t GUNPOWER_MAX = 2000;
+uint16_t GUNPOWER = 1250;
 const uint8_t GUN_CH1 = 4;
 const uint8_t GUN_CH2 = 5;
 const uint8_t GUN_LEVER = 2;
@@ -54,8 +55,8 @@ const uint8_t CAM_Y_CH = 1;
 
 void initMotors()
 {
-  pwm.writeMicroseconds(GUN_CH1, MIN_THROTTLE);
-  pwm.writeMicroseconds(GUN_CH2, MIN_THROTTLE);
+  pwm.writeMicroseconds(GUN_CH1, GUNPOWER_MIN);
+  pwm.writeMicroseconds(GUN_CH2, GUNPOWER_MIN);
   delay(2000);
 }
 
@@ -105,15 +106,15 @@ void servoWrite(uint8_t channel, uint8_t degrees)
 
 void gunShot()
 {
-  pwm.writeMicroseconds(GUN_CH1, 1250);
-  pwm.writeMicroseconds(GUN_CH2, 1250);
+  pwm.writeMicroseconds(GUN_CH1, GUNPOWER);
+  pwm.writeMicroseconds(GUN_CH2, GUNPOWER);
   delay(200);
   servoWrite(GUN_LOADER, 90);
   delay(800);
   servoWrite(GUN_LOADER, 180);
   delay(400);
-  pwm.writeMicroseconds(GUN_CH1, MIN_THROTTLE);
-  pwm.writeMicroseconds(GUN_CH2, MIN_THROTTLE);
+  pwm.writeMicroseconds(GUN_CH1, GUNPOWER_MIN);
+  pwm.writeMicroseconds(GUN_CH2, GUNPOWER_MIN);
 }
 
 void toggleLeds(uint8_t ledPin, uint8_t pwmValue)
@@ -122,6 +123,16 @@ void toggleLeds(uint8_t ledPin, uint8_t pwmValue)
     analogWrite(ledPin, 0);
   else
     analogWrite(ledPin, pwmValue);
+}
+
+void setGunPower(uint8_t value)
+{
+  GUNPOWER = map(value, 0, 250, GUNPOWER_MIN, GUNPOWER_MAX);
+  pwm.writeMicroseconds(GUN_CH1, GUNPOWER);
+  pwm.writeMicroseconds(GUN_CH2, GUNPOWER);
+  delay(250);
+  pwm.writeMicroseconds(GUN_CH1, GUNPOWER_MIN);
+  pwm.writeMicroseconds(GUN_CH2, GUNPOWER_MIN);
 }
 
 void changeMotorSpeed(uint8_t s)
@@ -261,6 +272,9 @@ void execCommand(uint8_t type, uint8_t value)
     break;
   case 13:
     toggleLeds(OPT_LED_PIN, value);
+    break;
+  case 14:
+    setGunPower(value);
     break;
   case 96:
     sendTelemetry();
