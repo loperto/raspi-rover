@@ -16,6 +16,7 @@ interface IState {
     led2Brightness: number;
     settingsShowed: boolean;
     telemetry: ITelemetry | null;
+    gunPower: number;
 }
 
 export default class ControlPanel extends React.Component<{}, IState> {
@@ -30,6 +31,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
             ledBrightness: 0,
             led2Brightness: 0,
             settingsShowed: false,
+            gunPower: 30,
         };
         this.rover = null;
         this.canvas = null;
@@ -77,6 +79,11 @@ export default class ControlPanel extends React.Component<{}, IState> {
         this.rover?.sendCommand(CommandType.Sound, 255);
     }
 
+    setGunPower = (gunPower: number) => {
+        this.setState({ gunPower });
+        this.rover?.sendCommand(CommandType.GunPower, gunPower);
+    }
+
     forward = () => {
         this.rover?.sendCommand(CommandType.Forward);
     }
@@ -119,7 +126,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
     render() {
         const pitch = this.state.telemetry && (this.state.telemetry.pitch * -1);
         const roll = this.state.telemetry && (this.state.telemetry.roll * -1);
-        const { currentSpeed, settingsShowed, led2Brightness, ledBrightness, gunLever } = this.state;
+        const { currentSpeed, settingsShowed, led2Brightness, ledBrightness, gunLever, gunPower } = this.state;
         return (
             <div className="vw-100 vh-100 d-flex flex-column justify-content-between">
                 <canvas ref={x => this.canvas = x!}
@@ -156,7 +163,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                             />
                         </div>
                         {settingsShowed && <div className="row text-white">
-                            <div className="col-12 col-lg-3 d-flex justify-content-center">
+                            <div className="col-12 col-lg-2 d-flex justify-content-center">
                                 <RangeInput
                                     label="Speed"
                                     initialValue={currentSpeed}
@@ -166,7 +173,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.onChangeSpeed}
                                 />
                             </div>
-                            <div className="col-12 col-lg-3 d-flex justify-content-center">
+                            <div className="col-12 col-lg-2 d-flex justify-content-center">
                                 <RangeInput
                                     label="Gun Lever"
                                     initialValue={gunLever}
@@ -176,7 +183,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.onChangeGunLever}
                                 />
                             </div>
-                            <div className="col-12 col-lg-3 d-flex justify-content-center">
+                            <div className="col-12 col-lg-2 d-flex justify-content-center">
                                 <RangeInput
                                     label="Led 1"
                                     initialValue={ledBrightness}
@@ -186,7 +193,7 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     onChange={this.led}
                                 />
                             </div>
-                            <div className="col-12 col-lg-3 d-flex justify-content-center">
+                            <div className="col-12 col-lg-2 d-flex justify-content-center">
                                 <RangeInput
                                     label="Led 2"
                                     initialValue={led2Brightness}
@@ -194,6 +201,16 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                     max={255}
                                     step={10}
                                     onChange={this.led2}
+                                />
+                            </div>
+                            <div className="col-12 col-lg-2 d-flex justify-content-center">
+                                <RangeInput
+                                    label="Gun Power"
+                                    initialValue={gunPower}
+                                    min={10}
+                                    max={200}
+                                    step={10}
+                                    onChange={this.setGunPower}
                                 />
                             </div>
                         </div>}

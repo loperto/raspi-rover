@@ -22,6 +22,7 @@ export enum CommandType {
     GunShot = 11,
     GunLever = 12,
     Led2 = 13,
+    GunPower = 14,
     Telemetry = 96,
     StartCamera = 97,
     StopCamera = 98,
