@@ -207,8 +207,8 @@ export default class ControlPanel extends React.Component<{}, IState> {
                                 <RangeInput
                                     label="Gun Power"
                                     initialValue={gunPower}
-                                    min={10}
-                                    max={200}
+                                    min={20}
+                                    max={180}
                                     step={10}
                                     onChange={this.setGunPower}
                                 />
