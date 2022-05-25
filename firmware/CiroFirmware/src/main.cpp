@@ -164,9 +164,8 @@ void sendTelemetry()
   long distance = sonar.ping_cm();
   mpu6050.update();
   float temp = mpu6050.getTemp();
-  float angleX = mpu6050.getAngleX();
-  float angleY = mpu6050.getAngleY();
-
+  float angleX = mpu6050.getGyroAngleX();
+  float angleY = mpu6050.getAccAngleY();
   uint8_t distanceBytes[4];
   float2Bytes(distanceBytes, distance);
 
