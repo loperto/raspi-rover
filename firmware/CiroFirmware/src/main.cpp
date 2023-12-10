@@ -34,8 +34,8 @@ const uint8_t MAX_DISTANCE = 200;   // Maximum distance we want to ping for (in 
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
-L298N motorRight(MOTOR_RIGHT_E, MOTOR_RIGHT_1, MOTOR_RIGHT_2);
-L298N motorLeft(MOTOR_LEFT_E, MOTOR_LEFT_1, MOTOR_LEFT_2);
+L298N motorLeft(MOTOR_RIGHT_E, MOTOR_RIGHT_1, MOTOR_RIGHT_2);
+L298N motorRight(MOTOR_LEFT_E, MOTOR_LEFT_1, MOTOR_LEFT_2);
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 const uint16_t SERVOMIN = 150; // This is the 'minimum' pulse length count (out of 4096)
@@ -62,40 +62,40 @@ void initMotors()
 
 void forward()
 {
-  motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
-  motorLeft.forward();
+  motorLeft.setSpeed(speed);
   motorRight.forward();
+  motorLeft.forward();
 }
 
 void backward()
 {
-  motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
-  motorLeft.backward();
+  motorLeft.setSpeed(speed);
   motorRight.backward();
+  motorLeft.backward();
 }
 
 void left()
 {
-  motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
+  motorLeft.setSpeed(speed);
   motorLeft.backward();
   motorRight.forward();
 }
 
 void right()
 {
-  motorLeft.setSpeed(speed);
   motorRight.setSpeed(speed);
+  motorLeft.setSpeed(speed);
   motorLeft.forward();
   motorRight.backward();
 }
 
 void stop()
 {
-  motorLeft.stop();
   motorRight.stop();
+  motorLeft.stop();
 }
 
 void servoWrite(uint8_t channel, uint8_t degrees)
@@ -138,8 +138,8 @@ void setGunPower(uint8_t value)
 void changeMotorSpeed(uint8_t s)
 {
   speed = s;
-  motorLeft.setSpeed(s);
   motorRight.setSpeed(s);
+  motorLeft.setSpeed(s);
 }
 
 void beep(uint8_t freq)
@@ -211,10 +211,10 @@ void setup()
   pinMode(PING_LED_PIN, OUTPUT);
   pinMode(COMMNAD_LED_PIN, OUTPUT);
   digitalWrite(PING_LED_PIN, HIGH);
-  motorLeft.stop();
   motorRight.stop();
-  motorLeft.setSpeed(speed);
+  motorLeft.stop();
   motorRight.setSpeed(speed);
+  motorLeft.setSpeed(speed);
 
   Wire.begin();
   mpu6050.begin();
